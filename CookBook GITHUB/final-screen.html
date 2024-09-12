@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kristi&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Mooli&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/header.css">
+  <link rel="stylesheet" href="styles/general.css">
+  <link rel="stylesheet" href="styles/header.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/add-recipe.css">
+  <link rel="stylesheet" href="styles/final-screen.css">
+</head>
+<body>
+  <header class="header-container">
+    <div class="header-title"></div>
+    <div class="family-container">
+      <div class="family-name">Rebholz</div>
+      <div class="cookbook-name">Family CookBook</div>
+    </div>
+    <div class="right-menu-container">
+      <a id="homeTab" href="index.html" class="right-menu-item">
+        <div class="header-text">Home</div>
+      </a>
+      <a id="recipeBoxTab" href="add-recipe.html" class="right-menu-item">
+        <div class="header-text">Recipe Box</div>
+      </a>
+      <a id="cookBookTab" href="browse-recipes.html" class="right-menu-item">
+        <div class="header-text">CookBook</div>
+      </a>
+      <a id="listTab" href="final-screen.html" class="right-menu-item">
+        <div class="header-text">List</div>
+      </a>
+    </div>
+  </header>
+<div id="fullPage">
+  <div class="top-container">
+    <div class="SLAndButtons">
+      <div class="SL-title">Shopping List</div>
+    <div onclick="window.print()" class="action-button">Print</div>
+    </div>
+    
+    <div id="shoppingListTitles" class="recipe-names-container"></div>
+  </div>
+  
+  
+  <div id="shoppingListContainer" class="shopping-list-container">
+
+    <div class="category-list-inner">
+      <div id="produceList" class="category-list">
+        <div id="produceListTitle" class="category-title">Produce</div>
+        <div id="plusContainer-produce" class="plus-container">
+          <div id="otherPlusButton-produce" class="plus-other-items" onclick="displayOtherItems('produce')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-produce" onkeydown="addOtherItem(event, 'produce')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-produce" class="minus-other-items" onclick="displayOffOtherItems('produce')">x</div>
+          </div>
+        </div>
+      </div>
+      <div id="meatList" class="category-list">
+        <div id="meatListTitle" class="category-title">Meat</div>
+        <div id="plusContainer-meat" class="plus-container">
+          <div id="otherPlusButton-meat" class="plus-other-items" onclick="displayOtherItems('meat')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-meat" onkeydown="addOtherItem(event, 'meat')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-meat" class="minus-other-items" onclick="displayOffOtherItems('meat')">x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="category-list-inner">
+      <div id="pantryList" class="category-list">
+        <div id="pantryListTitle" class="category-title">Pantry</div>
+        <div id="plusContainer-pantry" class="plus-container">
+          <div id="otherPlusButton-pantry" class="plus-other-items" onclick="displayOtherItems('pantry')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-pantry" onkeydown="addOtherItem(event, 'pantry')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-pantry" class="minus-other-items" onclick="displayOffOtherItems('pantry')">x</div>
+          </div>
+        </div>
+      </div>
+      <div id="bakingList" class="category-list">
+        <div id="bakingListTitle" class="category-title">Baking/Spices</div>
+        <div id="plusContainer-baking" class="plus-container">
+          <div id="otherPlusButton-baking" class="plus-other-items" onclick="displayOtherItems('baking')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-baking" onkeydown="addOtherItem(event, 'baking')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-baking" class="minus-other-items" onclick="displayOffOtherItems('baking')">x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-list-inner">
+      <div id="dairyList" class="category-list">
+        <div id="dairyListTitle" class="category-title">Dairy</div>
+        <div id="plusContainer-dairy" class="plus-container">
+          <div id="otherPlusButton-dairy" class="plus-other-items" onclick="displayOtherItems('dairy')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-dairy" onkeydown="addOtherItem(event, 'dairy')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-dairy" class="minus-other-items" onclick="displayOffOtherItems('dairy')">x</div>
+          </div>
+        </div>
+      </div>
+      <div id="otherList" class="category-list">
+        <div id="otherListTitle" class="category-title">Other</div>
+        <div id="plusContainer-other" class="plus-container">
+          <div id="otherPlusButton-other" class="plus-other-items" onclick="displayOtherItems('other')">+</div>
+          <div class="other-and-minus">
+            <input id="otherInputBar-other" onkeydown="addOtherItem(event, 'other')" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-other" class="minus-other-items" onclick="displayOffOtherItems('other')">x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!--<div id="savedRecipes" class="saved-recipes-container">
+    <div id="saveListTitle" class="saved-lists-title">Saved Lists (limit 10)</div>
+    <div id="numberSaved">
+      <div class="saved-list-container">
+        <div class="saved-list">blah </div>
+        <div class="x-button">x</div>
+      </div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+      <div class="saved-list">blah blah blah</div>
+    </div>
+    
+  </div>
+-->
+  
+
+  <script src="scripts/shopping-list.js"></script>
+  <script src="scripts/add-recipe.js"></script>
+  <script src="scripts/final-screen.js"></script>
+ 
+
+</body>
+</html>

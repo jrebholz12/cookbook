@@ -1,0 +1,21 @@
+.body-container{
+  margin-top: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+}
+
+.page-button{
+  display: flex;
+  padding: 80px;
+  border: 1px solid black;
+  border-radius: 40px;
+  margin-bottom: 40px;
+  font-size: 30px;
+  background-color: white;
+}
+
+.page-button:hover{
+  cursor: pointer;
+}
+
