@@ -26,4 +26,5 @@ function getLastName(){
     document.getElementById('familyName').innerHTML = name
   }
   console.log(name)
+  console.log(name)
 }
