@@ -1,6 +1,6 @@
 
 showShoppingListTitles()
-let ingredientCategoryList = JSON.parse(localStorage.getItem('ingredientCategoryList'))
+let ingredientCategoryList = JSON.parse(localStorage.getItem('ingredientCategoryList')) || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'] ]
 sortTabs('list', 'list')
 
 
@@ -29,7 +29,7 @@ let dairyList = ingredientCategoryList[2] || []
 let meatList = ingredientCategoryList[3] || []
 let bakingList = ingredientCategoryList[4] || []
 
-console.log(produceList)
+console.log(ingredientCategoryList)
 
 
 let maxLength = ''
