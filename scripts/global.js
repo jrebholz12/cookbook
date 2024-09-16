@@ -21,7 +21,7 @@ function sortTabs(page, style){
 function getLastName(){
   let name = localStorage.getItem('lastName')
   console.log(name)
-  if(name == null || name == undefined || name ==''){
+  if(name == null || name == undefined || name =='' || name === '' || name === null || name === undefined){
     return
   } else {
     document.getElementById('familyName').innerHTML = name
