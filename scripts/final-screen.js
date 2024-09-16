@@ -22,11 +22,14 @@ ingredientCategoryList.push(bakingList)
 console.log(ingredientCategoryList)
 localStorage.setItem('ingredientCategoryList', JSON.stringify(ingredientCategoryList))*/
 
+
 let produceList = ingredientCategoryList[0] || []
 let pantryList = ingredientCategoryList[1] || []
 let dairyList = ingredientCategoryList[2] || []
 let meatList = ingredientCategoryList[3] || []
 let bakingList = ingredientCategoryList[4] || []
+
+console.log(produceList)
 
 
 let maxLength = ''
