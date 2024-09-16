@@ -666,6 +666,7 @@ function sortNewToOld(){
 
 
 function sortTabs(page, style){
+  getLastName()
   let home = document.getElementById('homeTab')
   let recipeBox = document.getElementById('recipeBoxTab')
   let cookBook = document.getElementById('cookBookTab')

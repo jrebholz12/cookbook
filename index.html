@@ -15,9 +15,16 @@
 </head>
 <body>
   <header class="header-container">
-    <div class="header-title"></div>
+    <div class="header-title">
+      <div class="settings-container" id="settingsContainer">
+        <img class="settings-image" onclick="toggleSettings()" src="icons/settings.jpg">
+        <div id="settingsBox" class="settings-main display-off">
+          <input onkeydown="updateLastName(event)" class="last-name" id="last-name-indicator" placeholder="Last Name...">
+        </div>
+      </div>
+    </div>
     <div class="family-container">
-      <div class="family-name">Your Name Here</div>
+      <div id="familyName" class="family-name">Your Name Here</div>
       <div class="cookbook-name">Family CookBook</div>
     </div>
     <div class="right-menu-container">
@@ -55,8 +62,10 @@
 
   </div>
 
-  
+  <script src="scripts/global.js"></script>
   <script src="scripts/homepage.js"></script>
+
+
  
 
 </body>
