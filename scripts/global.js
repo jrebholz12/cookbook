@@ -20,7 +20,7 @@ function sortTabs(page, style){
 
 function getLastName(){
   let name = localStorage.getItem('lastName')
-  if(name === ''){
+  if(name === null){
     return
   } else {
     document.getElementById('familyName').innerHTML = name
