@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="styles/header.css">
   <link rel="stylesheet" href="styles/index.css">
   <link rel="stylesheet" href="styles/general.css">
-  <link rel="stylesheet" href="styles/mobile.css">
  
 </head>
 <body>
@@ -22,6 +21,10 @@
         <img class="settings-image" onclick="toggleSettings()" src="icons/settings.jpg">
         <div id="settingsBox" class="settings-main display-off">
           <input onkeydown="updateLastName(event)" class="last-name" id="last-name-indicator" placeholder="Last Name...">
+          <div id="themePicker" class="theme-picker">
+            <img onclick="changeTheme('light')" class="theme-pic" src="pictures/lightwallpaper.jpg">
+            <img onclick="changeTheme('dark')" class="theme-pic" src="pictures/darkwallpaper.jpg">
+          </div>
         </div>
       </div>
     </div>
@@ -48,30 +51,10 @@
   <div class="main-section">
     
     
-    <div class="homepage-area">
-      <div class="rectangle-background">
-        <img class="cover" src="icons/cookbook.jpg">
-        <img class="spiral" src="icons/notebook-removebg-preview.png">
-        <div class="box-container">
-          <a href="add-recipe.html">
-            <div class="button-box">
-             <img class="image-list" src="icons/recipeBox.png">
-             My Recipe Box
-            </div>
-          </a>
-          <a href="browse-recipes.html">
-            <div class="button-box">
-            <img class="image-list" src="icons/littlebook.webp">
-            My CookBook
-            </div>
-          </a>
-      </div>
-
-
-
-      </div>
-      
+    <div id="homepageArea" class="homepage-area">                        
+        <!--This is all added in homepage.js under the initiate theme and change theme functions. Edit the main screen there.--> 
     </div>
+
     
 
   </div>

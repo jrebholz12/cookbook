@@ -6,8 +6,19 @@ a:link{
   text-decoration: none!important;
 }
 
-.rectangle-background{
+.light-rectangle-background{
   background-color: rgb(67, 18, 18);
+  position: fixed;
+  width: 650px;
+  height: 700px;
+  top: 50%;
+  margin-top: -350px;
+  left: 50%;
+  margin-left: -300px; /* Negative half of width. */
+}
+
+.dark-rectangle-background{
+  background-color: rgb(168, 168, 168);
   position: fixed;
   width: 650px;
   height: 700px;
@@ -63,7 +74,7 @@ a:link{
 
 
 
-.button-box{
+.light-button-box{
   position: relative;
   text-decoration: none;
   display: flex;
@@ -81,6 +92,24 @@ a:link{
   transition: all 0.2s;  
 }
 
+.dark-button-box{
+  position: relative;
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: rgb(0, 0, 0);
+  border: 3px solid rgb(36, 36, 36);
+  margin-top: 15px;
+  font-size: 30px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: rgb(186, 186, 186);
+  cursor: pointer;
+  transition: all 0.2s;  
+}
+
 .image-list{
   height: 40px;
   text-decoration: none;
@@ -89,7 +118,7 @@ a:link{
 
 
 @media (max-height: 900px) {
-  .rectangle-background{
+  .light-rectangle-background, .dark-rectangle-background{
     top: 60px;
     margin-top: 4px;
     height: 650px;
