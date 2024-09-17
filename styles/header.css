@@ -1,4 +1,4 @@
-.header-container{
+.header-container-desktop{
   background-color: white;
   opacity: .98;
   height: 60px;
@@ -268,5 +268,10 @@
 .display-off{
   display: none;
 }
+
+@media (max-width: 1200px) {
+
+  }
+  
 
 

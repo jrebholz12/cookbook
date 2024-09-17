@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="styles/header.css">
   <link rel="stylesheet" href="styles/index.css">
   <link rel="stylesheet" href="styles/general.css">
+  <link rel="stylesheet" href="styles/mobile.css">
  
 </head>
 <body>
-  <header class="header-container">
+
+  <header class="header-container-desktop">
     <div class="header-title">
       <div class="settings-container" id="settingsContainer">
         <img class="settings-image" onclick="toggleSettings()" src="icons/settings.jpg">
@@ -45,20 +47,32 @@
 
   <div class="main-section">
     
-    <div class="rectangle-background"></div>
-    <img class="cover" src="icons/cookbook.jpg">
-      <div class="box-container">
-        <a href="add-recipe.html"><div class="button-box">
-          <img class="image-list" src="icons/recipeBox.png">
-           My Recipe Box
-        </div></a>
-        <a href="browse-recipes.html"><div class="button-box">
-          <img class="image-list" src="icons/littlebook.webp">
-          My CookBook
-        </div></a>
+    
+    <div class="homepage-area">
+      <div class="rectangle-background">
+        <img class="cover" src="icons/cookbook.jpg">
+        <img class="spiral" src="icons/notebook-removebg-preview.png">
+        <div class="box-container">
+          <a href="add-recipe.html">
+            <div class="button-box">
+             <img class="image-list" src="icons/recipeBox.png">
+             My Recipe Box
+            </div>
+          </a>
+          <a href="browse-recipes.html">
+            <div class="button-box">
+            <img class="image-list" src="icons/littlebook.webp">
+            My CookBook
+            </div>
+          </a>
+      </div>
+
+
 
       </div>
-    <img class="spiral" src="icons/notebook-removebg-preview.png">
+      
+    </div>
+    
 
   </div>
 

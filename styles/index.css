@@ -9,40 +9,51 @@ a:link{
 .rectangle-background{
   background-color: rgb(67, 18, 18);
   position: fixed;
-  width: 600px;
-  height: 650px;
-  top: 70px;
+  width: 650px;
+  height: 700px;
+  top: 50%;
+  margin-top: -350px;
   left: 50%;
   margin-left: -300px; /* Negative half of width. */
 }
 
 .cover{
   position: fixed;
-  width: 575px;
-  height: 630px;
-  top: 80px;
+  width: 625px;
+  height: 680px;
+  top: 50%;
+  margin-top: -340px;
   left: 50%;
   margin-left: -287.5px; /* Negative half of width. */
 
 }
 
-.cover:hover{
-  body img{
-    opacity: .7;
-  }
+.spiral{
+  position: fixed;
+  width: 150px;
+  height: 680px;
+  top: 50%;
+  margin-top: -340px;
+  left: 50%;
+  margin-left: -340px; /* Negative half of width. */
+
+}
+
+
+.homepage-area{
+  position: relative;
 }
 
 .box-container{
   position: fixed;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 400px;
-  bottom: 6%;
+  text-decoration: none;
+  top: 50%;
+  margin-top: 100px;
   left: 50%;
   margin-left: -200px; /* Negative half of width. */
-  text-decoration: none;
 }
 
 .button-box:hover{
@@ -55,6 +66,7 @@ a:link{
 
 
 .button-box{
+  position: relative;
   text-decoration: none;
   display: flex;
   flex-direction: row;
@@ -76,13 +88,22 @@ a:link{
   text-decoration: none;
 }
 
-.spiral{
-  position: fixed;
-  width: 100px;
-  height: 630px;
-  top: 70px;
-  left: 50%;
-  margin-left: -340px; /* Negative half of width. */
 
+
+@media (max-height: 900px) {
+  .rectangle-background{
+    top: 100px;
+    margin-top: 8px;
+  }
+
+  .spiral, .cover{
+    top: 100px;
+    margin-top: 15px;
+  }
+
+  .box-container{
+    top: 450px;
+  }
+ 
 }
 
