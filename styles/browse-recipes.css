@@ -279,4 +279,15 @@ padding: 0px 8px;
   color: white;
 }
 
+@media only screen and (max-device-width: 480px){
+  .title-and-picture, .title-and-picture-selected, .recipe-picture{
+    min-width: 50px;
+  }
+
+  .recipe-title-container{
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+}
+
 
