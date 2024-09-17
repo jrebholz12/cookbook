@@ -335,34 +335,5 @@ font-size: 10px;
 .display-off{
   display: none;
 }
-
-@media (max-width: 1200px) {
-
-  .page-layout{
-    flex-direction: column;
-  }
-
-  .recipe-info{
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .recipe-info2{
-    margin-left: 10px;
-  }
-
-  .ing-title{
-    justify-content: center;
-  }
-
-  .index-card{
-    margin-top: 50px;
-  }
-
-  .input-container{
-    display: flex;
-    flex-direction: row;
-  }
-  }
   
 
