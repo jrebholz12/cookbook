@@ -178,7 +178,7 @@ function ingredientSearch(event){
       //console.log(ingid + "$$")
       ingredientBox.insertAdjacentHTML("beforeend", html)
       document.getElementById('search-bar-input').value = ""
-      //console.log(searchtext)
+      console.log(recipeList)
     loop1: for(let i=0; i<recipeList.length; i++){
       let ingredientsList = recipeList[i].ingredients[0]
       loop2: for(let t=0; t<ingredientsList.length; t++){

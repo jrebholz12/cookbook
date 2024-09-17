@@ -65,10 +65,17 @@ a:link{
   margin-left: -200px; /* Negative half of width. */
 }
 
-.button-box:hover{
+.light-button-box:hover{
   background-color: rgb(86,38,30);
   color: rgb(225,180,137);
   border-color: rgb(225,180,137);
+  text-decoration: none;
+}
+
+.dark-button-box:hover{
+  background-color: rgb(0, 0, 0);
+  color: rgb(240, 240, 240);
+  border-color: rgb(146, 146, 146);
   text-decoration: none;
 }
 

@@ -20,6 +20,8 @@ function updateLastName(event){
     document.getElementById('familyName').innerHTML = displayName
     localStorage.setItem('lastName', name)
     console.log(localStorage.getItem('lastName'))
+    let box = document.getElementById('settingsBox')
+    box.classList.add('display-off')
   } else{}
 }
 
@@ -46,6 +48,8 @@ function changeTheme(theme){
             </div>
           </div>`
   localStorage.setItem('currentTheme', theme)
+  let box = document.getElementById('settingsBox')
+  box.classList.add('display-off')
 }
 
 function initiateTheme(){
