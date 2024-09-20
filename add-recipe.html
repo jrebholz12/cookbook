@@ -47,25 +47,54 @@
         </div>
         <img class="title-picture" src="icons/pencil.png">
       </div>
+
+
       <div class="input-container">
-        <div class="recipe-info">
+        <!-- Recipe Details Section -->
+        <fieldset class="recipe-info">
+          <legend>Recipe Details</legend>
+          
+          <label for="id-title">Recipe Name</label>
           <input id="id-title" class="input-field input-title" placeholder="Recipe Name">
+          
+          <label for="id-website">Source</label>
           <input id="id-website" class="input-field input-website" placeholder="Source">
+          
+          <label for="id-cuisine">Cuisine</label>
           <input id="id-cuisine" class="input-field input-cuisine" placeholder="Cuisine">
+          
+          <label for="id-servings">Servings</label>
           <input id="id-servings" class="input-field input-servings" placeholder="Servings">
+          
+          <label for="id-picture">Image URL</label>
           <div id="pictureInputContainer" class="picture-input-container">
             <input id="id-picture" class="input-field input-picture" placeholder="Image URL">
-            <div id="previewImageUpload" class="upload-button">Upload</div>
+            <button id="previewImageUpload" class="upload-button">Upload</button>
           </div>
+          <div class="onscreen-container">
+            <!-- Add this line to handle the image URL being displayed -->
+            <div class="picture-onscreen"></div>
+          </div>
+          
+          
           <div class="image-preview-text">Recommend image ratio of 2.3 : 1</div>
-        </div>
-        <div class="ing-title">Ingredients</div>
-        <div class="recipe-info recipe-info2">
+        </fieldset>
+
+        <!-- Ingredients Section -->
+        <fieldset class="recipe-info recipe-info2">
+          <legend>Ingredients</legend>
+          
+          <label for="id-quantity">Quantity</label>
           <input id="id-quantity" class="input-field input-quantity" placeholder="Quantity">
+          
+          <label for="id-unit">Unit</label>
           <input id="id-unit" class="input-field input-unit" placeholder="Unit">
+          
+          <label for="id-ingredient">Ingredient</label>
           <input id="id-ingredient" class="input-field input-ingredient" placeholder="Ingredient">
-        </div>
+        </fieldset>
       </div>
+
       
     </div>
 

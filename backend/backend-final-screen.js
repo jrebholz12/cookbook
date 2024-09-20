@@ -1,453 +1,400 @@
 // Global Variables for list
-let ingredientCategoryList = JSON.parse(localStorage.getItem('ingredientCategoryList')) || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'] ]
-let produceList = ingredientCategoryList[0] || []
-let pantryList = ingredientCategoryList[1] || []
-let dairyList = ingredientCategoryList[2] || []
-let meatList = ingredientCategoryList[3] || []
-let bakingList = ingredientCategoryList[4] || []
-let otherItemsId = document.getElementsByClassName('shopping-list-ingredient').length + 1
-let maxLength = ''
-let finalFinalList = [JSON.parse(localStorage.getItem('finalFinalList'))] || []
+//localStorage.setItem('ingredientCategoryList', JSON.stringify([['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]));
+let ingredientCategoryList = JSON.parse(localStorage.getItem('ingredientCategoryList')) || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
+const [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+let otherItemsId = document.getElementsByClassName('shopping-list-ingredient').length + 1;
+let maxLength = '';
+let finalFinalList = JSON.parse(localStorage.getItem('finalFinalList')) || [];
+
+const listMap = {
+  produceList: produceList,
+  meatList: meatList,
+  pantryList: pantryList,
+  bakingList: bakingList,
+  dairyList: dairyList,
+  otherList: otherList
+};
 
 
-//Export Functions
-export function getLength(){
-  let lengthArray = []
-  let length1 = produceList.length
-  let length2 = pantryList.length
-  let length3 = dairyList.length
-  let length4 = meatList.length
-  let length5 = bakingList.length
-  lengthArray=[length1, length2, length3, length4, length5]
-  maxLength = Math.max(...lengthArray)
+// Export Functions
+export function getLength() {
+  const lengthArray = [produceList.length, pantryList.length, dairyList.length, meatList.length, bakingList.length];
+  maxLength = Math.max(...lengthArray);
 }
 
-export function saveList(){
-  let saveCount = document.getElementById('numberSaved').childElementCount
-  console.log(saveCount)
-  let saveContent = document.getElementById('fullPage')
-  localStorage.setItem(`savedList${saveCount+1}`, JSON.stringify(saveContent))
-  let showSaved = document.getElementById('numberSaved')
-  let html = `${Date()}`
-  showSaved.insertAdjacentHTML('beforeend', html)
+export function saveList() {
+  const saveCount = document.getElementById('numberSaved').childElementCount;
+  const saveContent = document.getElementById('fullPage').innerHTML;
+  localStorage.setItem(`savedList${saveCount + 1}`, JSON.stringify(saveContent));
+  const showSaved = document.getElementById('numberSaved');
+  showSaved.insertAdjacentHTML('beforeend', new Date().toString());
 }
 
-export function showShoppingListTitles(){
-  let location = document.getElementById('shoppingListTitles')
-  location.insertAdjacentHTML('beforeend', localStorage.getItem('shoppingListTitles'))
+export function showShoppingListTitles() {
+  const location = document.getElementById('shoppingListTitles');
+  location.insertAdjacentHTML('beforeend', localStorage.getItem('shoppingListTitles'));
 }
 
-export function deselectAll(){
-  let checkArea = document.getElementsByClassName('shopping-list-ingredient')
-  for(let i=0; i<checkArea.length;i++){
-    let stringName = String(checkArea[1])
-    let newIDCheck = document.getElementById(newID)
-    if(newIDCheck.classList.includes('display-on')){
-      newIDCheck.classList.remove('display-on')
-    } else if(newIDCheck.classList.includes('display-off')){
-      newIDCheck.classList.remove('display-off')
-    } else{}
+export function deselectAll() {
+  const checkArea = document.getElementsByClassName('shopping-list-ingredient');
+  Array.from(checkArea).forEach((el) => {
+    el.classList.toggle('display-on');
+    el.classList.toggle('display-off');
+  });
+}
+
+export function displayOtherItems(paragraph) {
+  toggleDisplayState(paragraph, true);
+}
+
+export function displayOffOtherItems(paragraph) {
+  toggleDisplayState(paragraph, false);
+}
+
+function toggleDisplayState(paragraph, state) {
+  const plusButton = document.getElementById(`otherPlusButton-${paragraph}`);
+  const minusButton = document.getElementById(`otherMinusButton-${paragraph}`);
+  const inputButton = document.getElementById(`otherInputBar-${paragraph}`);
+
+  if (state) {
+    plusButton.classList.add('display-off');
+    minusButton.classList.add('display-on');
+    inputButton.classList.add('display-on');
+    inputButton.focus();
+  } else {
+    plusButton.classList.remove('display-off');
+    minusButton.classList.remove('display-on');
+    inputButton.classList.remove('display-on');
   }
 }
 
-export function displayOtherItems(paragraph){
-  let plusButton = document.getElementById(`otherPlusButton-${paragraph}`)
-  let minusButton = document.getElementById(`otherMinusButton-${paragraph}`)
-  let inputButton = document.getElementById(`otherInputBar-${paragraph}`)
-  plusButton.classList.add('display-off')
-  minusButton.classList.add('display-on')
-  inputButton.classList.add('display-on')
-  document.getElementById(`otherInputBar-${paragraph}`).focus()
-}
+export function addOtherItem(event, paragraph) {
+  if (event.key === "Enter") {
+    const location = document.getElementById(`plusContainer-${paragraph}`);
+    const item = document.getElementById(`otherInputBar-${paragraph}`).value;
+    const html = `
+      <div id="ing${otherItemsId}" class="shopping-list-ingredient">${item}
+        <div id="actionBar${otherItemsId}" class="action-bar">
+          <img src="icons/edit.png" id="editIcon${otherItemsId}" class="button-bar">
+          <div id="moveBar${otherItemsId}">
+            <img src="icons/move.png" class="button-bar">
+            <div id="${otherItemsId}moveList" class="move-list-container">
+              ${[...Array(5).keys()].map(i => `<div id="${otherItemsId}moveList${i + 1}" class="move-list-category"></div>`).join('')}
+            </div>
+          </div>
+          <img id="trashButton${otherItemsId}" src="icons/trash.png" class="button-bar">
+        </div>
+      </div>`;
 
-export function displayOffOtherItems(paragraph){
-  let plusButton = document.getElementById(`otherPlusButton-${paragraph}`)
-  let minusButton = document.getElementById(`otherMinusButton-${paragraph}`)
-  let inputButton = document.getElementById(`otherInputBar-${paragraph}`)
-  plusButton.classList.remove('display-off')
-  minusButton.classList.remove('display-on')
-  inputButton.classList.remove('display-on')
-}
+    location.insertAdjacentHTML("beforebegin", html);
 
-export function displayOffBody(){
-  let element = document.getElementsByClassName('display-on')
-  element.classList.remove('display-on')
-}
-
-export function addOtherItem(event, paragraph){
-  if(event.key === "Enter"){
-    let location = document.getElementById(`plusContainer-${paragraph}`)
-    let item = document.getElementById(`otherInputBar-${paragraph}`)
-    let html =
-    
-    `<div id="ing${otherItemsId}" class="shopping-list-ingredient">${item.value}<div id="actionBar${otherItemsId}" class="action-bar">
-    <img src=icons/edit.png id="editIcon${otherItemsId}" class="button-bar">
-    <div id="moveBar${otherItemsId}"><img src=icons/move.png class="button-bar">
-    <div id="${otherItemsId}moveList" class="move-list-container">
-      <div id="${otherItemsId}moveList1" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList2" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList3" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList4" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList5" class="move-list-category"></div>
-    </div></div>
-    <img id="trashButton${otherItemsId}" src=icons/trash.png class="button-bar">
-    </div></div>`
-
-    location.insertAdjacentHTML("beforebegin", html)
-
-    const hoverElement1 = document.getElementById(`ing${otherItemsId}`);
-    hoverElement1.addEventListener('mouseover', () => displayActionBar(`${otherItemsId}`));
-    hoverElement1.addEventListener('mouseout', () => displayActionBarOff(`${otherItemsId}`));
-
-    const hoverElement2 = document.getElementById(`moveBar${otherItemsId}`);
-    hoverElement2.addEventListener('mouseover', () => displayMoveBar(`${otherItemsId}`));
-    hoverElement2.addEventListener('mouseout', () => displayMoveBarOff(`${otherItemsId}`));
-
-    const newElement1 = document.getElementById(`editIcon${otherItemsId}`);
-      newElement1.addEventListener('click', () => editIngredient(`${otherItemsId}`));
-
-      const newElement2 = document.getElementById(`${otherItemsId}moveList1`);
-      newElement2.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList1`));
-
-      const newElement3 = document.getElementById(`${otherItemsId}moveList2`);
-      newElement3.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList2`));
-
-      const newElement4 = document.getElementById(`${otherItemsId}moveList3`);
-      newElement4.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList3`));
-
-      const newElement5 = document.getElementById(`${otherItemsId}moveList4`);
-      newElement5.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList4`));
-
-      const newElement6 = document.getElementById(`${otherItemsId}moveList5`);
-      newElement6.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList5`));
-
-      const newElement7 = document.getElementById(`trashButton${otherItemsId}`);
-      newElement7.addEventListener('click', () => deleteIngredient(`${otherItemsId}`));
-
-
-    otherItemsId++
-    item.value = ''
-    displayOffOtherItems(paragraph)
-   } else{}
-  //let fullHTML = document.getElementById('fullPage').innerHTML
-  //localStorage.setItem('fullHTML', fullHTML)
-}
-
-export function editIngredient(index){
-  let location = document.getElementById(`ing${index}`)
-  location.outerHTML = `<div id="ing${index}" class="shopping-list-ingredient">edit</div>`
-  let html = `<input onkeydown="saveEdit(event, ${index})" id="editInput${index}" class="edit-input-bar" value="${location.innerText}">`
-  location = document.getElementById(`ing${index}`)
-  location.insertAdjacentHTML('beforeend', html)
-  document.getElementById(`editInput${index}`).focus()
-  //let fullHTML = document.getElementById('fullPage').innerHTML
-  //localStorage.setItem('fullHTML', fullHTML)
-  
-}
-
-export function saveEdit(event, index){
-  if(event.key === "Enter"){
-  let permLocation = document.getElementById(`ing${index}`)
-  let editLocation = document.getElementById(`editInput${index}`)
-  permLocation.innerHTML = editLocation.value
-  permLocation.outerHTML = `<div id="ing${otherItemsId}" class="shopping-list-ingredient">${item.value}<div id="actionBar${otherItemsId}" class="action-bar">
-    <img src=icons/edit.png id="editIcon${otherItemsId}" class="button-bar">
-    <div id="moveBar${otherItemsId}"><img src=icons/move.png class="button-bar">
-    <div id="${otherItemsId}moveList" class="move-list-container">
-      <div id="${otherItemsId}moveList1" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList2" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList3" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList4" class="move-list-category"></div>
-      <div id="${otherItemsId}moveList5" class="move-list-category"></div>
-    </div></div>
-    <img id="trashButton${otherItemsId}" src=icons/trash.png class="button-bar">
-    </div></div>`
-
-    const hoverElement1 = document.getElementById(`ing${otherItemsId}`);
-    hoverElement1.addEventListener('mouseover', () => displayActionBar(`${otherItemsId}`));
-    hoverElement1.addEventListener('mouseout', () => displayActionBarOff(`${otherItemsId}`));
-
-    const hoverElement2 = document.getElementById(`moveBar${otherItemsId}`);
-    hoverElement2.addEventListener('mouseover', () => displayMoveBar(`${otherItemsId}`));
-    hoverElement2.addEventListener('mouseout', () => displayMoveBarOff(`${otherItemsId}`));
-
-    const newElement1 = document.getElementById(`editIcon${otherItemsId}`);
-      newElement1.addEventListener('click', () => editIngredient(`${otherItemsId}`));
-
-      const newElement2 = document.getElementById(`${otherItemsId}moveList1`);
-      newElement2.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList1`));
-
-      const newElement3 = document.getElementById(`${otherItemsId}moveList2`);
-      newElement3.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList2`));
-
-      const newElement4 = document.getElementById(`${otherItemsId}moveList3`);
-      newElement4.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList3`));
-
-      const newElement5 = document.getElementById(`${otherItemsId}moveList4`);
-      newElement5.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList4`));
-
-      const newElement6 = document.getElementById(`${otherItemsId}moveList5`);
-      newElement6.addEventListener('click', () => makeTheMove(`${otherItemsId}moveList5`));
-
-      const newElement7 = document.getElementById(`trashButton${otherItemsId}`);
-      newElement7.addEventListener('click', () => deleteIngredient(`${otherItemsId}`));
-
-
-  editLocation.remove
-} else{}
-//let fullHTML = document.getElementById('fullPage').innerHTML
-//localStorage.setItem('fullHTML', fullHTML)
-}
-
-export function makeTheMove(index){
-  let location = document.getElementById(`${index}`)
-  let moveLocation = location.innerText.toLowerCase()
-  let fullItem = location.parentNode.parentNode.parentNode.parentNode
-  let nameOfItemString = fullItem.innerText
-  let nameOfItem = nameOfItemString.substring(0, nameOfItemString.indexOf(","))
-  let originalCategory = location.parentNode.parentNode.parentNode.parentNode.parentNode.id
-  originalCategory = originalCategory.substring(0, originalCategory.indexOf("L"))
-  if(originalCategory !== 'other'){
-    moveCategories(nameOfItem, originalCategory)
+    // Add event listeners dynamically
+    attachEventListeners(otherItemsId);
+    otherItemsId++;
+    document.getElementById(`otherInputBar-${paragraph}`).value = '';
+    displayOffOtherItems(paragraph);
   }
-    function moveCategories(name, original){
-      let originalList = eval(original + 'List')
-      loop1: for(let i = 0; i<originalList.length; i++){
-        if(name === originalList[i]){
-          originalList.splice(i, 1)
-          i--
-          continue loop1;
-        }
+}
+
+function attachEventListeners(id) {
+  const hoverElement = document.getElementById(`ing${id}`);
+  hoverElement.addEventListener('mouseover', () => displayActionBar(id));
+  hoverElement.addEventListener('mouseout', () => displayActionBarOff(id));
+
+  const moveBar = document.getElementById(`moveBar${id}`);
+  moveBar.addEventListener('mouseover', () => displayMoveBar(id));
+  moveBar.addEventListener('mouseout', () => displayMoveBarOff(id));
+
+  document.getElementById(`editIcon${id}`).addEventListener('click', () => editIngredient(id));
+  [...Array(5).keys()].forEach(i => {
+    document.getElementById(`${id}moveList${i + 1}`).addEventListener('click', () => makeTheMove(`${id}moveList${i + 1}`));
+  });
+
+  document.getElementById(`trashButton${id}`).addEventListener('click', () => deleteIngredient(id));
+}
+
+export function editIngredient(index) {
+  const location = document.getElementById(`ing${index}`);
+  const originalText = location.innerText;
+  location.innerHTML = `<input id="editInput${index}" class="edit-input-bar" value="${originalText}">`;
+  document.getElementById(`editInput${index}`).focus();
+  document.getElementById(`editInput${index}`).addEventListener('keydown', (event) => saveEdit(event, index));
+}
+
+export function saveEdit(event, index) {
+  if (event.key === "Enter") {
+    const editLocation = document.getElementById(`editInput${index}`).value;
+    const permLocation = document.getElementById(`ing${index}`);
+    permLocation.innerHTML = editLocation;
+    attachEventListeners(index); // Reattach the event listeners after editing
+  }
+}
+
+export function makeTheMove(index) {
+  const location = document.getElementById(index);
+
+  // Log the index and element for debugging
+  console.log(`Trying to find element with index: ${index}`);
+  console.log('Found element:', location);
+
+  if (!location) {
+    console.error(`Element with index ${index} not found.`);
+    return;
+  }
+
+  const moveLocation = location.innerText.toLowerCase().replace(' ', '') + 'List'; // Ensure correct moveLocation format
+  const fullItem = location.closest('.shopping-list-ingredient');
+
+  if (!fullItem) {
+    console.error('Full item not found for ingredient');
+    return;
+  }
+
+  const nameOfItem = fullItem.innerText.split(",")[0]; // Extract the item name before the comma
+  const originalCategory = fullItem.closest('.category-list')?.id || ''; // Find the original category
+
+  console.log(`Original Category: ${originalCategory}, Name of Item: ${nameOfItem}`);
+
+  // Remove the item from the original category list
+  if (originalCategory !== 'other') {
+    moveCategories(nameOfItem, originalCategory); // Remove the item from the original list
+  }
+
+  // Add the item to the new category list
+  const newList = listMap[moveLocation]; // Use listMap to access the correct list for the new category
+  if (newList) {
+    newList.push(nameOfItem);
+    newList.sort(); // Optionally sort the list alphabetically
+  } else {
+    console.error(`List for ${moveLocation} not found.`);
+  }
+
+  // Update the DOM by moving the full item to the new category section
+  const insertLocation = document.getElementById(`${moveLocation}Title`); // Correctly construct the new location ID
+  if (insertLocation) {
+    insertLocation.insertAdjacentElement('afterend', fullItem); // Insert the item in the new category
+  } else {
+    console.error(`Insert location for ${moveLocation}Title not found.`);
+  }
+
+  // Save the updated lists to localStorage
+  updateIngredientCategoryList();
+}
+
+// Function to remove the item from the original list
+function moveCategories(name, originalCategory) {
+  const originalList = listMap[originalCategory]; // Use listMap to get the correct list for the original category
+
+  // Check if originalList exists and is an array
+  if (!Array.isArray(originalList)) {
+    console.error(`Original list for category ${originalCategory} is not an array or not found.`);
+    return;
+  }
+
+  // Find and remove the item from the original category list
+  const index = originalList.indexOf(name);
+  if (index > -1) {
+    originalList.splice(index, 1);
+  }
+}
+
+  // Function to update the ingredient category list in localStorage
+  function updateIngredientCategoryList() {
+  // Clear the existing contents of ingredientCategoryList
+  ingredientCategoryList.length = 0;
+
+  // Push the updated lists into the category array
+  ingredientCategoryList.push(produceList, pantryList, dairyList, meatList, bakingList, otherList);
+
+  // Save the updated ingredientCategoryList to localStorage
+  localStorage.setItem('ingredientCategoryList', JSON.stringify(ingredientCategoryList));
+}
+
+
+
+export function deleteIngredient(index) {
+  document.getElementById(`ing${index}`).remove();
+}
+
+export function recipeNames() {
+  const location = document.getElementById('recipeNames');
+  const quantMatrix = [];
+  groceryTitles.forEach((title, i) => {
+    let quantity = 1;
+    for (let t = i + 1; t < groceryTitles.length; t++) {
+      if (title === groceryTitles[t]) {
+        quantity++;
+        groceryTitles.splice(t, 1);
+        t--;
       }
     }
+    quantMatrix.push(quantity);
+  });
 
-  if(moveLocation !== 'other'){
-    let newList = eval((moveLocation + 'List'))
-    newList.push(nameOfItem) 
-  }
+  groceryTitles.forEach((title, i) => {
+    if (quantMatrix[i] > 1) {
+      groceryTitles[i] = `${title} x${quantMatrix[i]}`;
+    }
+  });
 
-  fullItem.remove()
-  location = document.getElementById(`${index}`)
-  let insertLocation = document.getElementById(`${moveLocation}ListTitle`)
-  insertLocation.insertAdjacentElement('afterend', fullItem)
-  ingredientCategoryList = []
-  ingredientCategoryList.push(produceList)
-  ingredientCategoryList.push(pantryList)
-  ingredientCategoryList.push(dairyList)
-  ingredientCategoryList.push(meatList)
-  ingredientCategoryList.push(bakingList)
-  localStorage.setItem('ingredientCategoryList', JSON.stringify(ingredientCategoryList)) 
+  groceryTitles.forEach(title => {
+    location.insertAdjacentHTML("beforeend", `<div class="recipe-name">${title}</div>`);
+  });
 }
 
-export function insertList(){  
-  console.log(finalFinalList)
-  finalFinalList = finalFinalList[0].sort()
-  let location = ''
-  loop1: for(let v=0; v<finalFinalList.length; v++){
-    let html = `<div id="ing${v}" class="shopping-list-ingredient">${finalFinalList[v]}<div id="actionBar${v}" class="action-bar">
-    <img src=icons/edit.png id="editIcon${v}" class="button-bar">
-    <div id="moveBar${v}"><img src=icons/move.png class="button-bar">
-    <div id="${v}moveList" class="move-list-container">
-      <div id="${v}moveList1" class="move-list-category"></div>
-      <div id="${v}moveList2" class="move-list-category"></div>
-      <div id="${v}moveList3" class="move-list-category"></div>
-      <div id="${v}moveList4" class="move-list-category"></div>
-      <div id="${v}moveList5" class="move-list-category"></div>
-    </div></div>
-    <img id="trashButton${v}" src=icons/trash.png class="button-bar">
-    </div></div>`
-    let ingredient = finalFinalList[v]
-    ingredient = ingredient.substring(0,ingredient.indexOf(","))
+export function displayActionBar(index) {
+  const bar = document.getElementById(`actionBar${index}`);
+  if (bar) {
+    bar.classList.add('display-on');
+  }
+}
+
+export function displayActionBarOff(index) {
+  const bar = document.getElementById(`actionBar${index}`);
+  const moveBar = document.getElementById(`${index}moveList`);
+  if (bar) {
+    bar.classList.remove('display-on');
+  }
+  if (moveBar && moveBar.classList.contains('display-on')) {
+    moveBar.classList.remove('display-on');
+  }
+}
+
+export function insertList() {
+  console.log(finalFinalList);
+
+  // Check if finalFinalList is an array and has at least one item
+  if (!Array.isArray(finalFinalList) || finalFinalList.length === 0) {
+    console.error('finalFinalList is not an array or is empty.');
+    return;
+  }
+
+  // If the first element is not an array, handle accordingly
+  const sortedFinalList = Array.isArray(finalFinalList[0]) ? finalFinalList[0].sort() : finalFinalList.sort();
+
+  let location = '';
+
+  // Function to find the category for an ingredient by checking if it contains any keyword
+  function findCategory(ingredient) {
+    const lowerCaseIngredient = ingredient.toLowerCase();
     
-    loop2: for(let i=0; i<maxLength; i++){
+    if (produceList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-produce");
+    } else if (pantryList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-pantry");
+    } else if (dairyList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-dairy");
+    } else if (meatList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-meat");
+    } else if (bakingList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-baking");
+    } else {
+      return document.getElementById("plusContainer-other");
+    }
+  }
 
-      if(ingredient === produceList[i]){
-        location = document.getElementById("plusContainer-produce")
-        location.insertAdjacentHTML('beforebegin', html)
-        continue loop1;
-      } 
+  // Loop through the sortedFinalList
+  sortedFinalList.forEach((ingredient, v) => {
+    // Generate HTML for each ingredient
+    console.log(ingredient);
+    console.log(produceList);
+    
+    const html = `
+      <div id="ing${v}" class="shopping-list-ingredient">${ingredient}
+        <div id="actionBar${v}" class="action-bar">
+          <img src="icons/edit.png" id="editIcon${v}" class="button-bar">
+          <div id="moveBar${v}">
+            <img src="icons/move.png" class="button-bar">
+            <div id="${v}moveList" class="move-list-container">
+              ${[...Array(5).keys()].map(i => `<div id="${v}moveList${i + 1}" class="move-list-category"></div>`).join('')}
+            </div>
+          </div>
+          <img id="trashButton${v}" src="icons/trash.png" class="button-bar">
+        </div>
+      </div>`;
 
-      if(ingredient === pantryList[i]){
-        location = document.getElementById("plusContainer-pantry")
-        location.insertAdjacentHTML('beforebegin', html)
-        continue loop1;
-      } 
-      
-      if(ingredient === dairyList[i]){
-        location = document.getElementById("plusContainer-dairy")
-        location.insertAdjacentHTML('beforebegin', html)
-        continue loop1;
-      } 
+    // Find the correct location based on whether the ingredient contains a word from the lists
+    location = findCategory(ingredient);
 
-      if(ingredient === meatList[i]){
-        location = document.getElementById("plusContainer-meat")
-        location.insertAdjacentHTML('beforebegin', html)
-        continue loop1;
-      } 
+    // Insert HTML before the correct location
+    location.insertAdjacentHTML("beforebegin", html);
 
-      if(ingredient === bakingList[i]){
-        location = document.getElementById("plusContainer-baking")
-        location.insertAdjacentHTML('beforebegin', html)
-        continue loop1;
-      } 
-        
+    // Add event listeners dynamically for each action
+    attachEventListeners(v);
+  });
+}
+
+
+
+export function displayMoveBar(index) {
+  const bar = document.getElementById(`${index}moveList`);
+  const ingredientElement = document.getElementById(`ing${index}`);
+
+  // Check if the elements exist
+  if (!bar || !ingredientElement) {
+    console.error(`Elements for move bar or ingredient not found for index ${index}`);
+    return;
+  }
+
+  // Use the closest category container and ensure it exists
+  const parentCategory = ingredientElement.closest('.category-list');
+
+  // Log ingredient element and parent category for debugging
+  console.log('Ingredient Element:', ingredientElement);
+  console.log('Parent Category:', parentCategory);
+
+  if (!parentCategory) {
+    console.error(`Parent category not found for ingredient element with index ${index}`);
+    return;
+  }
+
+  const parentLocation = parentCategory.id;
+
+  const categoryMap = {
+    produceList: ['Meat', 'Pantry', 'Baking', 'Dairy', 'Other'],
+    meatList: ['Produce', 'Pantry', 'Baking', 'Dairy', 'Other'],
+    pantryList: ['Produce', 'Meat', 'Baking', 'Dairy', 'Other'],
+    bakingList: ['Produce', 'Meat', 'Pantry', 'Dairy', 'Other'],
+    dairyList: ['Produce', 'Meat', 'Pantry', 'Baking', 'Other'],
+    otherList: ['Produce', 'Meat', 'Pantry', 'Baking', 'Dairy']
+  };
+
+  // Check if the parent location is valid and update the move list categories
+  if (categoryMap[parentLocation]) {
+    bar.classList.add('display-on');
+    categoryMap[parentLocation].forEach((category, i) => {
+      const categoryElement = document.getElementById(`${index}moveList${i + 1}`);
+      if (categoryElement) {
+        categoryElement.innerText = category;
+      } else {
+        console.error(`Move list category element not found for ${index}moveList${i + 1}`);
       }
-
-      location = document.getElementById("plusContainer-other")
-      location.insertAdjacentHTML("beforebegin", html)
-
-      const hoverElement1 = document.getElementById(`ing${v}`);
-      hoverElement1.addEventListener('mouseover', () => displayActionBar(`${v}`));
-      hoverElement1.addEventListener('mouseout', () => displayActionBarOff(`${v}`));
-
-      const hoverElement2 = document.getElementById(`moveBar${v}`);
-      hoverElement2.addEventListener('mouseover', () => displayMoveBar(`${v}`));
-      hoverElement2.addEventListener('mouseout', () => displayMoveBarOff(`${v}`));
-
-
-    const newElement1 = document.getElementById(`editIcon${v}`);
-      newElement1.addEventListener('click', () => editIngredient(`${v}`));
-
-      const newElement2 = document.getElementById(`${v}moveList1`);
-      newElement2.addEventListener('click', () => makeTheMove(`${v}moveList1`));
-
-      const newElement3 = document.getElementById(`${v}moveList2`);
-      newElement3.addEventListener('click', () => makeTheMove(`${v}moveList2`));
-
-      const newElement4 = document.getElementById(`${v}moveList3`);
-      newElement4.addEventListener('click', () => makeTheMove(`${v}moveList3`));
-
-      const newElement5 = document.getElementById(`${v}moveList4`);
-      newElement5.addEventListener('click', () => makeTheMove(`${v}moveList4`));
-
-      const newElement6 = document.getElementById(`${v}moveList5`);
-      newElement6.addEventListener('click', () => makeTheMove(`${v}moveList5`));
-
-      const newElement7 = document.getElementById(`trashButton${v}`);
-      newElement7.addEventListener('click', () => deleteIngredient(`${v}`));
-
-
-
-    }
-   
-    //document.getElementById('fullPage').innerHTML = pastedit
-  }
-
-export function displayActionBar(index){
-    let bar =document.getElementById(`actionBar${index}`)
-    bar.classList.add('display-on')
-}
-
-export function displayActionBarOff(index){
-  let bar =document.getElementById(`actionBar${index}`)
-  bar.classList.remove('display-on')
-  let moveBar = document.getElementById(`${index}moveList`)
-  if(moveBar.classList.contains('.display-on')){
-    moveBar.classList.remove('display-on')
+    });
+  } else {
+    console.error(`Invalid parent location: ${parentLocation}`);
   }
 }
 
-export function displayMoveBar(index){
-  let bar = document.getElementById(`${index}moveList`)
-  bar.classList.add('display-on')
-  let childID = document.getElementById(`ing${index}`)
-  let parentLocation = childID.parentNode.id
-  let firstValue = document.getElementById(`${index}moveList1`)
-  let secondValue = document.getElementById(`${index}moveList2`)
-  let thirdValue = document.getElementById(`${index}moveList3`)
-  let fourthValue = document.getElementById(`${index}moveList4`)
-  let fifthValue = document.getElementById(`${index}moveList5`)
-  if(parentLocation === 'produceList'){
-    firstValue.innerText = 'Meat'
-    secondValue.innerText = 'Pantry'
-    thirdValue.innerText = 'Baking'
-    fourthValue.innerText = 'Dairy'
-    fifthValue.innerText = 'Other'
-  } else if(parentLocation === 'meatList'){
-    firstValue.innerText = 'Produce'
-    secondValue.innerText = 'Pantry'
-    thirdValue.innerText = 'Baking'
-    fourthValue.innerText = 'Dairy'
-    fifthValue.innerText = 'Other'
-  } else if(parentLocation === 'pantryList'){
-    firstValue.innerText = 'Produce'
-    secondValue.innerText = 'Meat'
-    thirdValue.innerText = 'Baking'
-    fourthValue.innerText = 'Dairy'
-    fifthValue.innerText = 'Other'
-  } else if(parentLocation === 'bakingList'){
-    firstValue.innerText = 'Produce'
-    secondValue.innerText = 'Meat'
-    thirdValue.innerText = 'Pantry'
-    fourthValue.innerText = 'Dairy'
-    fifthValue.innerText = 'Other'
-  } else if(parentLocation === 'dairyList'){
-    firstValue.innerText = 'Produce'
-    secondValue.innerText = 'Meat'
-    thirdValue.innerText = 'Pantry'
-    fourthValue.innerText = 'Baking'
-    fifthValue.innerText = 'Other'
-  } else if(parentLocation === 'otherList'){
-    firstValue.innerText = 'Produce'
-    secondValue.innerText = 'Meat'
-    thirdValue.innerText = 'Pantry'
-    fourthValue.innerText = 'Baking'
-    fifthValue.innerText = 'Dairy'
+export function displayMoveBarOff(index) {
+  const bar = document.getElementById(`${index}moveList`);
+
+  if (bar) {
+    bar.classList.remove('display-on');
+
+    // Clear the inner text of each move list category
+    [...Array(5).keys()].forEach(i => {
+      const categoryElement = document.getElementById(`${index}moveList${i + 1}`);
+      if (categoryElement) {
+        categoryElement.innerText = ''; // Clear the text content of each category
+      } else {
+        console.error(`Move list category element not found for ${index}moveList${i + 1}`);
+      }
+    });
+  } else {
+    console.error(`Move list bar not found for index ${index}`);
   }
 }
 
-export function displayMoveBarOff(index){
- let bar =document.getElementById(`${index}moveList`)
- bar.classList.remove('display-on')
- let firstValue = document.getElementById(`${index}moveList1`)
-  let secondValue = document.getElementById(`${index}moveList2`)
-  let thirdValue = document.getElementById(`${index}moveList3`)
-  let fourthValue = document.getElementById(`${index}moveList4`)
-  let fifthValue = document.getElementById(`${index}moveList5`)
-  firstValue.innerText = ''
-  secondValue.innerText = ''
-  thirdValue.innerText = ''
-  fourthValue.innerText = ''
-  fifthValue.innerText = ''
-}
 
-export function deleteIngredient(index){
-  let ingredient = document.getElementById(`ing${index}`)
-  ingredient.remove()
-  //let fullHTML = document.getElementById('fullPage').innerHTML
-  //localStorage.setItem('fullHTML', fullHTML)
-
-}
-
-export function recipeNames(){
-  let location = document.getElementById('recipeNames')
-  let quantMatrix = []
-  loop1: for(let i = 0; i<groceryTitles.length; i++){
-    let quantity = 1
-    loop2: for(let t = i+1; t<groceryTitles.length; t++){
-      if(groceryTitles[i] === groceryTitles[t]){
-        quantity++
-        groceryTitles.splice(t,1)
-        t--
-        continue;
-      } else{continue;}
-    }
-    quantMatrix.push(quantity)
-  }
-
-  for(let i=0; i<groceryTitles.length; i++){
-    if(quantMatrix[i] === 1){
-
-    } else{
-    let name = groceryTitles[i]
-    groceryTitles[i] = `${name} x${quantMatrix[i]}`
-    }
-  }
-  
-  for(let i = 0; i<groceryTitles.length; i++){
-  let html = `<div class="recipe-name">${groceryTitles[i]}</div>`
-    location.insertAdjacentHTML("beforeend", html)
-  }
-}
 
 
