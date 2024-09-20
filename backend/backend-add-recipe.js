@@ -1,3 +1,23 @@
+
+// Global Variables for adding a recipe
+let recipeList = JSON.parse(localStorage.getItem('recipeList')) || []
+let shoppingRecipeList = [JSON.parse(localStorage.getItem('shoppingRecipeList'))] || []
+let fullRecipe = {}
+let title = ''
+let website = ''
+let cuisine = ''
+let servings = ''
+let picture = ''
+let ingredientList = []
+let quantityList = []
+let unitList = []
+let numberList = 0
+let i = 0
+
+let unitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar']
+
+//Start export functions
+
 export function searchRecipes(){
   let searchtext = document.getElementById('cutting-search').value
   for(let i=0; i<recipeList.length; i++){
@@ -126,8 +146,13 @@ export function populateRecipeBox(){
   for(let i = 0; i<recipeList.length; i++){
     let recipeTitle = recipeList[indexList[i]].title
     recipeTitle = toTitleCase(recipeTitle)
-    let html = `<div id=existingRecipe${indexList[i]} onclick="showExistingRecipe(${indexList[i]})" class="recipe-box-recipe">${recipeTitle}</div>`
+    let html = `<div id=existingRecipe${indexList[i]} class="recipe-box-recipe">${recipeTitle}</div>`
     location.insertAdjacentHTML('beforeend', html)
+    // Select the newly created element
+    const newElement = document.getElementById(`existingRecipe${indexList[i]}`);
+    
+    // Add an event listener to the new element using an arrow function
+    newElement.addEventListener('click', () => showExistingRecipe(indexList[i]));
   }
 }
 
@@ -342,7 +367,7 @@ export function deleteIngredient(index){
 
 
 export function addToList(input){
-  const location = document.getElementById(`${input}`)
+  let location = document.getElementById(`${input}`)
   let html = `<div class="list-text">${input}</div>`
   location.insertAdjacentHTML("beforeend", html)
 }
@@ -413,24 +438,4 @@ export function toTitleCase(str) {
 
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export function sortTabs(page, style){
-  getLastName()
-  let home = document.getElementById('homeTab')
-  let recipeBox = document.getElementById('recipeBoxTab')
-  let cookBook = document.getElementById('cookBookTab')
-  let list = document.getElementById('listTab')
-    if(home.classList.contains('home-tab')){
-      home.classList.remove('home-tab')
-    } else if(recipeBox.classList.contains('recipe-box-tab')){
-      recipeBox.classList.remove('recipe-box-tab')
-    } else if(cookBook.classList.contains('cookbook-tab')){
-      cookBook.classList.remove('cookbook-tab')
-    } else if(list.classList.contains('list-tab')){
-      list.classList.remove('list-tab')
-    } else {}
-
-    let current = document.getElementById(`${page}Tab`)
-    current.classList.add(`${style}-tab`)
 }

@@ -49,21 +49,21 @@
       </div>
       <div class="input-container">
         <div class="recipe-info">
-          <input id="id-title" onkeydown="addField(event, 'title')" class="input-field input-title" placeholder="Recipe Name">
-          <input id="id-website" onkeydown="addField(event, 'website')" class="input-field input-website" placeholder="Source">
-          <input id="id-cuisine" onkeydown="addField(event, 'cuisine')" class="input-field input-cuisine" placeholder="Cuisine">
-          <input id="id-servings" onkeydown="addField(event, 'servings')" class="input-field input-servings" placeholder="Servings">
+          <input id="id-title" class="input-field input-title" placeholder="Recipe Name">
+          <input id="id-website" class="input-field input-website" placeholder="Source">
+          <input id="id-cuisine" class="input-field input-cuisine" placeholder="Cuisine">
+          <input id="id-servings" class="input-field input-servings" placeholder="Servings">
           <div id="pictureInputContainer" class="picture-input-container">
-            <input id="id-picture" onkeydown="addField(event, 'picture')" class="input-field input-picture" placeholder="Image URL">
-            <div onclick="previewImage()" class="upload-button">Upload</div>
+            <input id="id-picture" class="input-field input-picture" placeholder="Image URL">
+            <div id="previewImageUpload" class="upload-button">Upload</div>
           </div>
           <div class="image-preview-text">Recommend image ratio of 2.3 : 1</div>
         </div>
         <div class="ing-title">Ingredients</div>
         <div class="recipe-info recipe-info2">
-          <input id="id-quantity" onkeydown="addIngredient(event)" class="input-field input-quantity" placeholder="Quantity">
-          <input id="id-unit" onkeydown="addIngredient(event)" class="input-field input-unit" placeholder="Unit">
-          <input id="id-ingredient" onkeydown="addIngredient(event)" class="input-field input-ingredient" placeholder="Ingredient">
+          <input id="id-quantity" class="input-field input-quantity" placeholder="Quantity">
+          <input id="id-unit" class="input-field input-unit" placeholder="Unit">
+          <input id="id-ingredient" class="input-field input-ingredient" placeholder="Ingredient">
         </div>
       </div>
       
@@ -98,9 +98,9 @@
         </div>
       </div>
       <div class="button-container">
-        <button onclick="saveRecipe()" class="button">Save Recipe</button>
-        <button onclick="printRecipe()" class="button">Print Recipe</button>
-        <button id="deleteButton" onclick="deleteRecipe()" class="button delete-button">Delete Recipe</button>
+        <button id="saveButton" class="button">Save Recipe</button>
+        <button id="printButton" class="button">Print Recipe</button>
+        <button id="deleteButton" class="button delete-button">Delete Recipe</button>
 
       </div>
       
@@ -117,23 +117,14 @@
           
         </div>
         <img class="cutting-board" src="icons/cuttingboard.png">
-        <input type="text" id="cutting-search" placeholder="Search..." class="recipe-search" onkeyup="searchRecipes()">
+        <input type="text" id="cutting-search" placeholder="Search..." class="recipe-search">
       </div>
     </div>
   </main>
-  <div class="recipe-container">
-    
-
- 
-    
-
-
-    
-    
+  <div class="recipe-container">    
   </div>
-  <script src="scripts/global.js"></script>
+  
   <script type="module" src="scripts/add-recipe.js"></script>
-  <script src="backend/utils.js"></script>
 
 </body>
 </html>

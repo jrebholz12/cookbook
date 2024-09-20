@@ -42,7 +42,7 @@
   <div class="top-container">
     <div class="SLAndButtons">
       <div class="SL-title">Shopping List</div>
-    <div onclick="window.print()" class="action-button">Print</div>
+    <div id="windowPrint" class="action-button">Print</div>
     </div>
     
     <div id="shoppingListTitles" class="recipe-names-container"></div>
@@ -55,20 +55,20 @@
       <div id="produceList" class="category-list">
         <div id="produceListTitle" class="category-title">Produce</div>
         <div id="plusContainer-produce" class="plus-container">
-          <div id="otherPlusButton-produce" class="plus-other-items" onclick="displayOtherItems('produce')">+</div>
+          <div id="otherPlusButton-produce" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-produce" onkeydown="addOtherItem(event, 'produce')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-produce" class="minus-other-items" onclick="displayOffOtherItems('produce')">x</div>
+            <input id="otherInputBar-produce" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-produce" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
       <div id="meatList" class="category-list">
         <div id="meatListTitle" class="category-title">Meat</div>
         <div id="plusContainer-meat" class="plus-container">
-          <div id="otherPlusButton-meat" class="plus-other-items" onclick="displayOtherItems('meat')">+</div>
+          <div id="otherPlusButton-meat" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-meat" onkeydown="addOtherItem(event, 'meat')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-meat" class="minus-other-items" onclick="displayOffOtherItems('meat')">x</div>
+            <input id="otherInputBar-meat" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-meat" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
@@ -78,20 +78,20 @@
       <div id="pantryList" class="category-list">
         <div id="pantryListTitle" class="category-title">Pantry</div>
         <div id="plusContainer-pantry" class="plus-container">
-          <div id="otherPlusButton-pantry" class="plus-other-items" onclick="displayOtherItems('pantry')">+</div>
+          <div id="otherPlusButton-pantry" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-pantry" onkeydown="addOtherItem(event, 'pantry')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-pantry" class="minus-other-items" onclick="displayOffOtherItems('pantry')">x</div>
+            <input id="otherInputBar-pantry" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-pantry" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
       <div id="bakingList" class="category-list">
         <div id="bakingListTitle" class="category-title">Baking/Spices</div>
         <div id="plusContainer-baking" class="plus-container">
-          <div id="otherPlusButton-baking" class="plus-other-items" onclick="displayOtherItems('baking')">+</div>
+          <div id="otherPlusButton-baking" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-baking" onkeydown="addOtherItem(event, 'baking')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-baking" class="minus-other-items" onclick="displayOffOtherItems('baking')">x</div>
+            <input id="otherInputBar-baking" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-baking" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
@@ -101,52 +101,28 @@
       <div id="dairyList" class="category-list">
         <div id="dairyListTitle" class="category-title">Dairy</div>
         <div id="plusContainer-dairy" class="plus-container">
-          <div id="otherPlusButton-dairy" class="plus-other-items" onclick="displayOtherItems('dairy')">+</div>
+          <div id="otherPlusButton-dairy" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-dairy" onkeydown="addOtherItem(event, 'dairy')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-dairy" class="minus-other-items" onclick="displayOffOtherItems('dairy')">x</div>
+            <input id="otherInputBar-dairy" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-dairy" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
       <div id="otherList" class="category-list">
         <div id="otherListTitle" class="category-title">Other</div>
         <div id="plusContainer-other" class="plus-container">
-          <div id="otherPlusButton-other" class="plus-other-items" onclick="displayOtherItems('other')">+</div>
+          <div id="otherPlusButton-other" class="plus-other-items">+</div>
           <div class="other-and-minus">
-            <input id="otherInputBar-other" onkeydown="addOtherItem(event, 'other')" class="input-other-items" placeholder="Other item..">
-            <div id="otherMinusButton-other" class="minus-other-items" onclick="displayOffOtherItems('other')">x</div>
+            <input id="otherInputBar-other" class="input-other-items" placeholder="Other item..">
+            <div id="otherMinusButton-other" class="minus-other-items">x</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-  <!--<div id="savedRecipes" class="saved-recipes-container">
-    <div id="saveListTitle" class="saved-lists-title">Saved Lists (limit 10)</div>
-    <div id="numberSaved">
-      <div class="saved-list-container">
-        <div class="saved-list">blah </div>
-        <div class="x-button">x</div>
-      </div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-      <div class="saved-list">blah blah blah</div>
-    </div>
-    
-  </div>
--->
   
-  <script src="scripts/global.js"></script>
-  <script src="scripts/shopping-list.js"></script>
-  
-  <script src="scripts/final-screen.js"></script>
+  <script type="module" src="scripts/final-screen.js"></script>
  
 
 </body>

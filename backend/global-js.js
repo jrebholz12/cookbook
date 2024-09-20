@@ -1,4 +1,4 @@
-function sortTabs(page, style){
+export function sortTabs(page, style){
   getLastName()
   let home = document.getElementById('homeTab')
   let recipeBox = document.getElementById('recipeBoxTab')
@@ -18,7 +18,7 @@ function sortTabs(page, style){
     current.classList.add(`${style}-tab`)
 }
 
-function getLastName(){
+export function getLastName(){
   let name = localStorage.getItem('lastName')
   console.log(name)
   if(name === null){
