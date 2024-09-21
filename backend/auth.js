@@ -1,8 +1,4 @@
-//Imports needed functions
-import { toggleSettings } from "../backend/page-folders/backend-index.js";
-import { sortTabs } from "../backend/page-folders/global-js.js";
-import { updateLastName, getLastName, changeTheme, initiateTheme } from "../backend/docs.js";
-import { auth } from '../backend/firebase.js';
+import { auth } from './firebase.js';
 import {
   createUserWithEmailAndPassword,
   setPersistence,
@@ -11,11 +7,7 @@ import {
   onAuthStateChanged,
   signOut
 } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
-
-// On Start-up
-getLastName();
-initiateTheme();
-sortTabs('home', 'home');
+import { getLastName, initiateTheme } from './docs.js';
 
 const modal = document.getElementById('authModal');
 const authLink = document.getElementById('authLink');
@@ -129,8 +121,8 @@ function signOutUser() {
       console.log('User signed out');
       authLink.innerText = 'Sign In';
       document.getElementById('settingsContainer').classList.add('display-off');
-      document.getElementById('familyName').innerHTML = 'Your Name Here';
-      initiateTheme();
+      document.getElementById('familyName').innerHTML = "Your Name Here"
+      initiateTheme()
     })
     .catch((error) => {
       console.error('Error signing out:', error.message);
@@ -143,7 +135,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('settingsContainer').classList.remove('display-off');
     console.log('User is signed in:', user);
     authLink.innerText = 'Sign Out';
-    getLastName(); // Fetch last name from Firestore
+    getLastName();   // Fetch last name from Firestore
     initiateTheme(); // Apply the user's theme
   } else {
     console.log('User is signed out');
@@ -151,9 +143,3 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('settingsContainer').classList.add('display-off');
   }
 });
-
-// Event Listeners for settings
-document.getElementById('settingsImage').addEventListener('click', toggleSettings);
-document.getElementById('last-name-indicator').addEventListener('keydown', (event) => updateLastName(event));
-document.getElementById('lightTheme').addEventListener('click', () => changeTheme('light'));
-document.getElementById('darkTheme').addEventListener('click', () => changeTheme('dark'));

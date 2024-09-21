@@ -1,6 +1,6 @@
 //Imports needed functions from backend and global
-import { displayActionBar, displayActionBarOff, displayOtherItems, displayOffOtherItems, insertList, getLength, showShoppingListTitles } from "../backend/backend-final-screen.js"
-import { sortTabs, getLastName } from "../backend/global-js.js"
+import { displayActionBar, displayActionBarOff, displayOtherItems, displayOffOtherItems, insertList, getLength, showShoppingListTitles } from "../backend/page-folders/backend-final-screen.js"
+import { sortTabs, getLastName } from "../backend/page-folders/global-js.js"
 
 //Start functions
 showShoppingListTitles()

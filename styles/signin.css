@@ -1,0 +1,97 @@
+/* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black background with opacity */
+}
+
+.close:hover{
+  cursor: pointer;
+}
+
+.sign-in{
+  color: rgb(27, 26, 26);
+  text-decoration: none !important;
+  font-size: 15px;
+}
+
+.container {
+  display: flex;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  justify-items: center;
+  align-items: center;
+  justify-content: center; /* Horizontal centering */
+  align-items: center;    /* Vertical centering */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto; /* 10% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 20px;
+  width: 100%; /* Could be more or less, depending on screen size */
+  max-width: 400px; /* Set a max width to avoid too wide modal */
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.extra{
+  font-size: 12px;
+}
+
+/* Flexbox to align items vertically */
+#sign-in-container,
+#sign-up-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+#sign-in-container input,
+#sign-up-container input {
+  width: 100%; /* Full width for inputs */
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+#sign-in-container button,
+#sign-up-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#sign-in-container button:hover,
+#sign-up-container button:hover {
+  background-color: #45a049;
+}
+
+p {
+  text-align: center;
+}
+
+/* Extra small screen fixes */
+@media screen and (max-width: 600px) {
+  .modal-content {
+    width: 90%;
+    max-width: 90%;
+  }
+}

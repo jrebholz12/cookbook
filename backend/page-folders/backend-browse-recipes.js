@@ -1,5 +1,60 @@
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
+import { auth, db } from '../firebase.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+
+// Global variable for recipeList
+let recipeList = [];
+
+// Function to get the recipe list from Firestore or initialize it if it doesn't exist
+export async function getRecipeList(user) {
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'recipeList');
+
+    try {
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        recipeList = data.recipeList || []; // Get the recipe list or set as an empty array if it doesn't exist
+        console.log('User recipes:', recipeList);
+
+        if (recipeList.length > 0) {
+          console.log('Recipes found');
+        } else {
+          console.log('No recipes found, initializing with an empty list.');
+        }
+        sortRandom()
+        importCuisines()
+      } else {
+        console.log("No recipeList document found for this user, initializing with an empty list.");
+        recipeList = [];
+        await setDoc(userDocRef, { recipeList: recipeList });
+        sortRandom()
+        importCuisines()
+      }
+
+    } catch (error) {
+      console.error("Error fetching recipeList from Firestore: ", error);
+    }
+
+  } else {
+    console.log("No user is signed in.");
+  }
+}
+
+// Call this function when the user is authenticated
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in:", user);
+    getRecipeList(user); // Fetch the user's recipes after they sign in
+  } else {
+    console.log("No user is signed in.");
+  }
+});
+
+
+
 // Global Variables for browsing a recipe
-let recipeList = JSON.parse(localStorage.getItem('recipeList')) || []
 let quantityTracker = []
 let shoppingRecipeList = []
 let titleList = []

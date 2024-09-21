@@ -11,13 +11,14 @@
   <link rel="stylesheet" href="styles/header.css">
   <link rel="stylesheet" href="styles/index.css">
   <link rel="stylesheet" href="styles/general.css">
+  <link rel="stylesheet" href="styles/signin.css">
  
 </head>
 <body>
 
   <header class="header-container-desktop">
     <div class="header-title">
-      <div class="settings-container" id="settingsContainer">
+      <div class="settings-container display-off" id="settingsContainer">
         <img id="settingsImage" class="settings-image" src="icons/settings.jpg">
         <div id="settingsBox" class="settings-main display-off">
           <input class="last-name" id="last-name-indicator" placeholder="Last Name...">
@@ -27,6 +28,42 @@
           </div>
         </div>
       </div>
+
+      <div class="container">
+        <a href="#" class="sign-in" id="authLink">Sign In</a>
+      </div>
+      
+
+<!-- Modal -->
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    
+    <!-- Sign-In Form -->
+    <div id="sign-in-container">
+      <h2>Sign In</h2>
+      <input type="email" id="signInEmail" placeholder="Email" required>
+      <input type="password" id="signInPassword" placeholder="Password" required>
+      <button id="signInButton">Sign In</button>
+      <p class="extra">Not signed up? <a href="#" id="switchToSignUp">Click here to sign up</a></p>
+    </div>
+    
+    <!-- Sign-Up Form -->
+    <div id="sign-up-container" style="display:none;">
+      <h2>Sign Up</h2>
+      <input type="email" id="signUpEmail" placeholder="Email" required>
+      <input type="password" id="signUpPassword" placeholder="Password" required>
+      <button id="signUpButton">Sign Up</button>
+      <p class="extra">Already have an account? <a href="#" id="switchToSignIn">Click here to sign in</a></p>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
     </div>
     <div class="family-container">
       <div id="familyName" class="family-name">Your Name Here</div>
@@ -59,8 +96,13 @@
 
   </div>
 
-
+  <script type="module" src="backend/firebase.js"></script>
   <script type="module" src="scripts/index.js"></script>
+  <script type="module" src="backend/app.js"></script>
+  <script type="module" src="backend/authModal.js"></script>
+  
+
+
 
 
 

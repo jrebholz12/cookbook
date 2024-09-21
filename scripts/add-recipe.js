@@ -1,10 +1,26 @@
 //Imports needed functions from backend and global
-import { showExistingRecipe, saveRecipe, printRecipe, deleteRecipe, addIngredient, populateRecipeBox, addField, previewImage, searchRecipes } from '../backend/backend-add-recipe.js'
-import { getLastName, sortTabs } from '../backend/global-js.js';
+import { saveRecipe, printRecipe, deleteRecipe, addIngredient, populateRecipeBox, addField, previewImage, searchRecipes } from '../backend/page-folders/backend-add-recipe.js'
+import { getLastName } from '../backend/docs.js';
+import { sortTabs } from "../backend/page-folders/global-js.js"
+import { auth } from '../backend/firebase.js'
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js'
+
 
 //On Start-up
-populateRecipeBox()
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in:", user);
+    // Handle the signed-in user and update the UI accordingly
+  } else {
+    console.log("No user is signed in.");
+    // Redirect to login page if necessary
+  }
+});
+
+getLastName()
 sortTabs('recipeBox', 'recipe-box');
+
+
 
 
 //Event Listeners

@@ -1,20 +1,71 @@
+import { doc, getDoc, updateDoc, arrayRemove, setDoc } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
+import { auth, db } from '../firebase.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+
+
+// Global variable for recipeList
+let recipeList = [];
+
+// Function to get the recipe list from Firestore or initialize it if it doesn't exist
+export async function getRecipeList(user) {
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'recipeList');
+
+    try {
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        recipeList = data.recipeList || []; // Get the recipe list or set as an empty array if it doesn't exist
+        console.log('User recipes:', recipeList);
+
+        if (recipeList.length > 0) {
+          console.log('Recipes found');
+        } else {
+          console.log('No recipes found, initializing with an empty list.');
+        }
+        populateRecipeBox(); // Call populateRecipeBox after data is loaded
+      } else {
+        console.log("No recipeList document found for this user, initializing with an empty list.");
+        recipeList = [];
+        await setDoc(userDocRef, { recipeList: recipeList });
+        populateRecipeBox(); // Populate empty list
+      }
+
+    } catch (error) {
+      console.error("Error fetching recipeList from Firestore: ", error);
+    }
+
+  } else {
+    console.log("No user is signed in.");
+  }
+}
+
+// Call this function when the user is authenticated
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is signed in:", user);
+    getRecipeList(user); // Fetch the user's recipes after they sign in
+  } else {
+    console.log("No user is signed in.");
+  }
+});
 
 // Global Variables for adding a recipe
-let recipeList = JSON.parse(localStorage.getItem('recipeList')) || []
-let shoppingRecipeList = [JSON.parse(localStorage.getItem('shoppingRecipeList'))] || []
-let fullRecipe = {}
-let title = ''
-let website = ''
-let cuisine = ''
-let servings = ''
-let picture = ''
-let ingredientList = []
-let quantityList = []
-let unitList = []
-let numberList = 0
-let i = 0
+let fullRecipe = {};
+let title = '';
+let website = '';
+let cuisine = '';
+let servings = '';
+let picture = '';
+let ingredientList = [];
+let quantityList = [];
+let unitList = [];
+let numberList = 0;
+let i = 0;
 
-let unitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar']
+let unitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar'];
+
 
 //Start export functions
 
@@ -124,20 +175,44 @@ export function enterPreviewImage(event) {
 }
 
 
-export function deleteRecipe() {
-  const recipeName = toTitleCase(title);
+export async function deleteRecipe() {
+  const recipeName = toTitleCase(title); // Assuming `title` is globally available
   console.log(title);
 
-  const recipeIndex = recipeList.findIndex(recipe => recipe.title === title);
-  if (recipeIndex > -1) {
-    if (confirm(`Are you sure you want to delete ${recipeName} from your recipe box?`)) {
-      recipeList.splice(recipeIndex, 1);
-      localStorage.setItem('recipeList', JSON.stringify(recipeList));
-      alert(`${recipeName} has been removed.`);
-      location.reload();
+  // Check if the user is signed in
+  const user = auth.currentUser;
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'recipeList');
+
+    try {
+      // Find the recipe in the recipeList
+      const recipeIndex = recipeList.findIndex(recipe => recipe.title === title);
+
+      if (recipeIndex > -1) {
+        if (confirm(`Are you sure you want to delete ${recipeName} from your recipe box?`)) {
+          // Remove the recipe from Firestore
+          const recipeToDelete = recipeList[recipeIndex]; // This will be an object
+          
+          await updateDoc(userDocRef, {
+            recipeList: arrayRemove(recipeToDelete) // Use arrayRemove to delete the specific recipe object
+          });
+
+          alert(`${recipeName} has been removed.`);
+          location.reload();
+        }
+      } else {
+        alert(`${recipeName} is not in your recipe box.`);
+      }
+
+    } catch (error) {
+      console.error('Error deleting recipe: ', error);
+      alert('Failed to delete the recipe. Please try again.');
     }
+
   } else {
-    alert(`${recipeName} is not in your recipe box.`);
+    console.log("No user is signed in.");
+    alert('You must be signed in to delete a recipe.');
   }
 }
 
@@ -145,19 +220,45 @@ export function deleteRecipe() {
 
 export function populateRecipeBox() {
   const location = document.getElementById('recipeBoxList');
-  
+
+  if (!location) {
+    console.error('Recipe box list element not found');
+    return;
+  }
+
+  console.log('Running populateRecipeBox');
+
+  // Ensure recipeList is populated
+  if (!Array.isArray(recipeList) || recipeList.length === 0) {
+    console.log('No recipes found.');
+    location.innerHTML = '';
+    return;
+  }
+
+  // Sort the recipe titles alphabetically and get the corresponding indexes
   const alphabetList = recipeList.map(recipe => recipe.title).sort();
   const indexList = alphabetList.map(title => recipeList.findIndex(recipe => recipe.title === title));
 
+  // Clear any existing HTML content in the recipe box
+  location.innerHTML = '';
+
   indexList.forEach(index => {
     const recipeTitle = toTitleCase(recipeList[index].title);
-    const html = `<div id="existingRecipe${index}" class="recipe-box-recipe">${recipeTitle}</div>`;
-    location.insertAdjacentHTML('beforeend', html);
-    
+
+    // Create HTML structure for each recipe dynamically
+    const recipeElement = document.createElement('div');
+    recipeElement.id = `existingRecipe${index}`;
+    recipeElement.className = 'recipe-box-recipe';
+    recipeElement.innerText = recipeTitle;
+
+    // Add the recipe element to the DOM
+    location.appendChild(recipeElement);
+
     // Add event listener for the newly created element
-    document.getElementById(`existingRecipe${index}`).addEventListener('click', () => showExistingRecipe(index));
+    recipeElement.addEventListener('click', () => showExistingRecipe(index));
   });
 }
+
 
 
 export function showExistingRecipe(index) {
@@ -172,9 +273,10 @@ export function showExistingRecipe(index) {
   servings = existingRecipe.servings;
   picture = existingRecipe.picture;
   
-  ingredientList = [...existingRecipe.ingredients[0]];
-  quantityList = [...existingRecipe.ingredients[1]];
-  unitList = [...existingRecipe.ingredients[2]];
+  ingredientList = [];
+  quantityList = [];
+  unitList = [];
+  
   numberList = 0;
 
   document.getElementById('deleteButton').classList.add('display-on');
@@ -193,10 +295,23 @@ export function showExistingRecipe(index) {
 
   // Clear existing ingredients and add new ones
   clearIngredients();
-  existingRecipe.ingredients[0].forEach((ingredient, i) => displayIngredient(i, ingredient, quantityList[i], unitList[i]));
+  existingRecipe.ingredients.forEach((ingredientObj, i) => {
+    // Get ingredient, quantity, and unit from each object
+    const { ingredient, quantity, unit } = ingredientObj;
+
+    // Add the values to their respective arrays
+    ingredientList.push(ingredient);
+    quantityList.push(quantity);
+    unitList.push(unit);
+
+    // Display the ingredient on the page
+    displayIngredient(i, ingredient, quantity, unit);
+  });
 
   console.log(ingredientList);
 }
+
+
 
 function clearIngredients() {
   ['ingredient', 'unit', 'quantity', 'ingredient2id', 'unit2id', 'quantity2id', 'ingredient3id', 'unit3id', 'quantity3id'].forEach(id => {
@@ -387,7 +502,7 @@ export function addToList(input){
   location.insertAdjacentHTML("beforeend", html)
 }
 
-export function saveRecipe() {
+export async function saveRecipe() {
   const requiredFields = ['title', 'website', 'cuisine', 'servings', 'picture'];
 
   // Check if all required fields are filled
@@ -398,32 +513,63 @@ export function saveRecipe() {
     }
   }
 
-  // Proceed with saving if all fields are valid
+  // Convert ingredients into an array of objects
+  const ingredients = ingredientList.map((ingredient, index) => ({
+    ingredient: ingredient,
+    quantity: quantityList[index],
+    unit: unitList[index]
+  }));
+
   const newRecipe = {
     title: fullRecipe.title,
     cuisine: fullRecipe.cuisine,
     servings: fullRecipe.servings,
     picture: fullRecipe.picture,
     website: fullRecipe.website,
-    ingredients: [ingredientList, quantityList, unitList]
+    ingredients: ingredients // Store ingredients as an array of objects
   };
 
-  // Check if the recipe title already exists
-  const existingRecipeIndex = recipeList.findIndex(recipe => recipe.title === fullRecipe.title);
-  if (existingRecipeIndex > -1) {
-    if (confirm('A recipe with this title already exists. Do you want to overwrite it?')) {
-      recipeList[existingRecipeIndex] = newRecipe;
-    } else {
-      return;
-    }
-  } else {
-    recipeList.push(newRecipe);
+  const user = auth.currentUser;
+
+  if (!user) {
+    alert('You must be signed in to save a recipe.');
+    return;
   }
 
-  // Save to localStorage and reset fields
-  localStorage.setItem('recipeList', JSON.stringify(recipeList));
-  alert('Recipe saved successfully!');
-  clearRecipeForm();
+  // Reference to the Firestore document
+  const userDocRef = doc(db, 'users', user.uid, 'data', 'recipeList');
+
+  try {
+    // Check if the document exists
+    const docSnap = await getDoc(userDocRef);
+
+    let recipeList = [];
+
+    if (docSnap.exists()) {
+      recipeList = docSnap.data().recipeList || [];
+    }
+
+    // Check if the recipe title already exists
+    const existingRecipeIndex = recipeList.findIndex(recipe => recipe.title === fullRecipe.title);
+    if (existingRecipeIndex > -1) {
+      if (confirm('A recipe with this title already exists. Do you want to overwrite it?')) {
+        recipeList[existingRecipeIndex] = newRecipe;
+      } else {
+        return;
+      }
+    } else {
+      recipeList.push(newRecipe);
+    }
+
+    // Save the updated recipeList back to Firestore (creating the document if it doesn't exist)
+    await setDoc(userDocRef, { recipeList: recipeList }, { merge: true });
+
+    alert('Recipe saved successfully!');
+    clearRecipeForm();
+  } catch (error) {
+    console.error('Error saving recipe:', error);
+    alert('Failed to save recipe. Please try again.');
+  }
 }
 
 function clearRecipeForm() {
