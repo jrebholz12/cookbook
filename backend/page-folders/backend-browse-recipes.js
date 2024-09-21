@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
 import { auth, db } from '../firebase.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+import { transformRecipeList } from '../recipelist.js';
 
 // Global variable for recipeList
 let recipeList = [];
@@ -23,6 +24,7 @@ export async function getRecipeList(user) {
         } else {
           console.log('No recipes found, initializing with an empty list.');
         }
+        recipeList = transformRecipeList(recipeList)
         sortRandom()
         importCuisines()
       } else {
@@ -69,6 +71,7 @@ let finalQuantityList = []
 let finalUnitList = []
 let finalFinalList = JSON.parse(localStorage.getItem('finalFinalList')) || []
 let shoppingHTML = ''
+
 
 //Export Functions
 

@@ -28,3 +28,35 @@ export async function getRecipeList() {
 
   return recipeList;
 }
+
+export function transformRecipeList(recipeList) {
+  return recipeList.map(recipe => {
+    // Separate the ingredients into arrays for ingredient names, quantities, and units
+    const ingredientNames = recipe.ingredients.map(ingredient => ingredient.ingredient);
+    const ingredientQuantities = recipe.ingredients.map(ingredient => ingredient.quantity);
+    const ingredientUnits = recipe.ingredients.map(ingredient => ingredient.unit);
+    
+    return {
+      title: recipe.title,
+      website: recipe.website,
+      cuisine: recipe.cuisine,
+      servings: recipe.servings,
+      picture: recipe.picture,
+      ingredients: [ingredientNames, ingredientQuantities, ingredientUnits]
+    };
+  });
+}
+
+export function formatForFirestore(ingredientCategoryList) {
+  const formattedCategoryList = ingredientCategoryList.map((categoryList, index) => {
+    return { category: `category${index + 1}`, ingredients: categoryList };
+  });
+  
+  return formattedCategoryList;  // Return as a new variable name
+}
+
+export function revertFormattedCategoryList(formattedCategoryList) {
+  const originalCategoryList = formattedCategoryList.map(item => item.ingredients);
+  return originalCategoryList;  // You can use a different name here if needed
+}
+

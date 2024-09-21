@@ -1,19 +1,139 @@
-// Global Variables for list
-//localStorage.setItem('ingredientCategoryList', JSON.stringify([['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]));
-let ingredientCategoryList = JSON.parse(localStorage.getItem('ingredientCategoryList')) || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
-const [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
-let otherItemsId = document.getElementsByClassName('shopping-list-ingredient').length + 1;
-let maxLength = '';
-let finalFinalList = JSON.parse(localStorage.getItem('finalFinalList')) || [];
+import { doc, getDoc, updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
+import { auth, db } from '../firebase.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+import { formatForFirestore, revertFormattedCategoryList } from '../recipelist.js';
 
-const listMap = {
-  produceList: produceList,
-  meatList: meatList,
-  pantryList: pantryList,
-  bakingList: bakingList,
-  dairyList: dairyList,
-  otherList: otherList
-};
+let finalFinalList = JSON.parse(localStorage.getItem('finalFinalList')) || [];
+let ingredientCategoryList = [];
+let produceList, pantryList, dairyList, meatList, bakingList, otherList; // Declare globally
+
+// Function to get the recipe list from Firestore or initialize it if it doesn't exist
+export async function getCategoryList(user) {
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'ingredientCategoryList');
+    try {
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        let element = data.ingredientCategoryList || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
+        ingredientCategoryList = revertFormattedCategoryList(element);
+        [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+        console.log('Category List:', ingredientCategoryList);
+      } else {
+        // Initialize with default values if no document found
+        ingredientCategoryList = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
+        [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+        await setDoc(userDocRef, { ingredientCategoryList });
+      }
+    } catch (error) {
+      console.error("Error fetching ingredientCategoryList from Firestore:", error);
+    }
+  } else {
+    console.log("No user is signed in.");
+  }
+}
+
+// Function to initialize category lists and insert list into the DOM
+async function initializeCategoryListsAndInsert(user) {
+  await getCategoryList(user);  // Ensure getCategoryList completes before moving on
+  
+  // Step 1: Now you can safely use the category lists (produceList, etc.)
+  console.log('Initialized Category Lists:', { produceList, pantryList, dairyList, meatList, bakingList, otherList });
+
+  // Step 2: Insert the list into the DOM
+  await insertList();  // Insert the list
+}
+
+// Insert List into DOM
+export async function insertList() {
+  console.log("Inserting list...");
+  console.log(ingredientCategoryList + ' this is it');
+
+  if (!Array.isArray(finalFinalList) || finalFinalList.length === 0) {
+    console.error('finalFinalList is not an array or is empty.');
+    return;
+  }
+
+  const sortedFinalList = Array.isArray(finalFinalList[0]) ? finalFinalList[0].sort() : finalFinalList.sort();
+
+  let location = '';
+
+  // Function to find the category for an ingredient by checking if it contains any keyword
+  function findCategory(ingredient) {
+    const lowerCaseIngredient = ingredient.toLowerCase();
+
+    if (ingredientCategoryList[0].some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-produce");
+    } else if (ingredientCategoryList[1].some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-pantry");
+    } else if (ingredientCategoryList[2].some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-dairy");
+    } else if (ingredientCategoryList[3].some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-meat");
+    } else if (ingredientCategoryList[4].some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
+      return document.getElementById("plusContainer-baking");
+    } else {
+      return document.getElementById("plusContainer-other");
+    }
+  }
+
+  // Loop through the sortedFinalList and insert ingredients into DOM
+  sortedFinalList.forEach((ingredient, v) => {
+    const html = `
+      <div id="ing${v}" class="shopping-list-ingredient">${ingredient}
+        <div id="actionBar${v}" class="action-bar">
+          <img src="icons/edit.png" id="editIcon${v}" class="button-bar">
+          <div id="moveBar${v}">
+            <img src="icons/move.png" class="button-bar">
+            <div id="${v}moveList" class="move-list-container">
+              ${[...Array(5).keys()].map(i => `<div id="${v}moveList${i + 1}" class="move-list-category"></div>`).join('')}
+            </div>
+          </div>
+          <img id="trashButton${v}" src="icons/trash.png" class="button-bar">
+        </div>
+      </div>`;
+
+    location = findCategory(ingredient);
+    location.insertAdjacentHTML("beforebegin", html);
+    attachEventListeners(v);  // Add event listeners dynamically for each action
+  });
+}
+
+// Attach event listeners to elements
+function attachEventListeners(id) {
+  const hoverElement = document.getElementById(`ing${id}`);
+  hoverElement.addEventListener('mouseover', () => displayActionBar(id));
+  hoverElement.addEventListener('mouseout', () => displayActionBarOff(id));
+
+  const moveBar = document.getElementById(`moveBar${id}`);
+  moveBar.addEventListener('mouseover', () => displayMoveBar(id));
+  moveBar.addEventListener('mouseout', () => displayMoveBarOff(id));
+
+  document.getElementById(`editIcon${id}`).addEventListener('click', () => editIngredient(id));
+  [...Array(5).keys()].forEach(i => {
+    document.getElementById(`${id}moveList${i + 1}`).addEventListener('click', () => makeTheMove(`${id}moveList${i + 1}`));
+  });
+
+  document.getElementById(`trashButton${id}`).addEventListener('click', () => deleteIngredient(id));
+}
+
+// Firebase auth state listener that waits for user to sign in, then runs necessary functions
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    console.log("User is signed in.");
+    try {
+      // Step 1: Fetch category list and initialize it
+      await initializeCategoryListsAndInsert(user);
+    } catch (error) {
+      console.error("Error during initialization:", error);
+    }
+  } else {
+    console.log("No user is signed in.");
+  }
+});
+
+
 
 
 // Export Functions
@@ -96,23 +216,6 @@ export function addOtherItem(event, paragraph) {
   }
 }
 
-function attachEventListeners(id) {
-  const hoverElement = document.getElementById(`ing${id}`);
-  hoverElement.addEventListener('mouseover', () => displayActionBar(id));
-  hoverElement.addEventListener('mouseout', () => displayActionBarOff(id));
-
-  const moveBar = document.getElementById(`moveBar${id}`);
-  moveBar.addEventListener('mouseover', () => displayMoveBar(id));
-  moveBar.addEventListener('mouseout', () => displayMoveBarOff(id));
-
-  document.getElementById(`editIcon${id}`).addEventListener('click', () => editIngredient(id));
-  [...Array(5).keys()].forEach(i => {
-    document.getElementById(`${id}moveList${i + 1}`).addEventListener('click', () => makeTheMove(`${id}moveList${i + 1}`));
-  });
-
-  document.getElementById(`trashButton${id}`).addEventListener('click', () => deleteIngredient(id));
-}
-
 export function editIngredient(index) {
   const location = document.getElementById(`ing${index}`);
   const originalText = location.innerText;
@@ -130,12 +233,9 @@ export function saveEdit(event, index) {
   }
 }
 
-export function makeTheMove(index) {
+// Function to move an item between categories and update Firestore
+export async function makeTheMove(index) {
   const location = document.getElementById(index);
-
-  // Log the index and element for debugging
-  console.log(`Trying to find element with index: ${index}`);
-  console.log('Found element:', location);
 
   if (!location) {
     console.error(`Element with index ${index} not found.`);
@@ -153,39 +253,85 @@ export function makeTheMove(index) {
   const nameOfItem = fullItem.innerText.split(",")[0]; // Extract the item name before the comma
   const originalCategory = fullItem.closest('.category-list')?.id || ''; // Find the original category
 
-  console.log(`Original Category: ${originalCategory}, Name of Item: ${nameOfItem}`);
-
   // Remove the item from the original category list
   if (originalCategory !== 'other') {
     moveCategories(nameOfItem, originalCategory); // Remove the item from the original list
   }
 
-  // Add the item to the new category list
-  const newList = listMap[moveLocation]; // Use listMap to access the correct list for the new category
+  // Add the item to the new category list based on moveLocation
+  let newList;
+  switch (moveLocation) {
+    case 'produceList':
+      newList = produceList;
+      break;
+    case 'pantryList':
+      newList = pantryList;
+      break;
+    case 'dairyList':
+      newList = dairyList;
+      break;
+    case 'meatList':
+      newList = meatList;
+      break;
+    case 'bakingList':
+      newList = bakingList;
+      break;
+    case 'otherList':
+      newList = otherList;
+      break;
+    default:
+      console.error(`Invalid category list: ${moveLocation}`);
+      return;
+  }
+
+  // Add the item to the new list
   if (newList) {
     newList.push(nameOfItem);
     newList.sort(); // Optionally sort the list alphabetically
   } else {
-    console.error(`List for ${moveLocation} not found.`);
+    console.error(`New list for ${moveLocation} not found.`);
   }
 
   // Update the DOM by moving the full item to the new category section
-  const insertLocation = document.getElementById(`${moveLocation}Title`); // Correctly construct the new location ID
+  const insertLocation = document.getElementById(`${moveLocation}Title`);
   if (insertLocation) {
-    insertLocation.insertAdjacentElement('afterend', fullItem); // Insert the item in the new category
+    insertLocation.insertAdjacentElement('afterend', fullItem);
   } else {
     console.error(`Insert location for ${moveLocation}Title not found.`);
   }
 
-  // Save the updated lists to localStorage
-  updateIngredientCategoryList();
+  // Save the updated lists to Firestore
+  await updateIngredientCategoryList();
 }
+
 
 // Function to remove the item from the original list
 function moveCategories(name, originalCategory) {
-  const originalList = listMap[originalCategory]; // Use listMap to get the correct list for the original category
+  let originalList;
+  switch (originalCategory.toLowerCase()) {
+    case 'producelist':
+      originalList = produceList;
+      break;
+    case 'pantrylist':
+      originalList = pantryList;
+      break;
+    case 'dairylist':
+      originalList = dairyList;
+      break;
+    case 'meatlist':
+      originalList = meatList;
+      break;
+    case 'bakinglist':
+      originalList = bakingList;
+      break;
+    case 'otherlist':
+      originalList = otherList;
+      break;
+    default:
+      console.error(`Invalid category list: ${originalCategory}`);
+      return;
+  }
 
-  // Check if originalList exists and is an array
   if (!Array.isArray(originalList)) {
     console.error(`Original list for category ${originalCategory} is not an array or not found.`);
     return;
@@ -198,17 +344,25 @@ function moveCategories(name, originalCategory) {
   }
 }
 
-  // Function to update the ingredient category list in localStorage
-  function updateIngredientCategoryList() {
-  // Clear the existing contents of ingredientCategoryList
-  ingredientCategoryList.length = 0;
 
-  // Push the updated lists into the category array
-  ingredientCategoryList.push(produceList, pantryList, dairyList, meatList, bakingList, otherList);
-
-  // Save the updated ingredientCategoryList to localStorage
-  localStorage.setItem('ingredientCategoryList', JSON.stringify(ingredientCategoryList));
+async function updateIngredientCategoryList() {
+  const user = auth.currentUser;
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'ingredientCategoryList');
+    try {
+      const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
+      await updateDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
+      console.log('Ingredient category list updated in Firestore.');
+    } catch (error) {
+      console.error('Error updating ingredientCategoryList in Firestore:', error);
+    }
+  } else {
+    console.log('No user is signed in. Cannot update Firestore.');
+  }
 }
+
+
+
 
 
 
@@ -260,70 +414,6 @@ export function displayActionBarOff(index) {
   }
 }
 
-export function insertList() {
-  console.log(finalFinalList);
-
-  // Check if finalFinalList is an array and has at least one item
-  if (!Array.isArray(finalFinalList) || finalFinalList.length === 0) {
-    console.error('finalFinalList is not an array or is empty.');
-    return;
-  }
-
-  // If the first element is not an array, handle accordingly
-  const sortedFinalList = Array.isArray(finalFinalList[0]) ? finalFinalList[0].sort() : finalFinalList.sort();
-
-  let location = '';
-
-  // Function to find the category for an ingredient by checking if it contains any keyword
-  function findCategory(ingredient) {
-    const lowerCaseIngredient = ingredient.toLowerCase();
-    
-    if (produceList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
-      return document.getElementById("plusContainer-produce");
-    } else if (pantryList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
-      return document.getElementById("plusContainer-pantry");
-    } else if (dairyList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
-      return document.getElementById("plusContainer-dairy");
-    } else if (meatList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
-      return document.getElementById("plusContainer-meat");
-    } else if (bakingList.some(item => lowerCaseIngredient.includes(item.toLowerCase()))) {
-      return document.getElementById("plusContainer-baking");
-    } else {
-      return document.getElementById("plusContainer-other");
-    }
-  }
-
-  // Loop through the sortedFinalList
-  sortedFinalList.forEach((ingredient, v) => {
-    // Generate HTML for each ingredient
-    console.log(ingredient);
-    console.log(produceList);
-    
-    const html = `
-      <div id="ing${v}" class="shopping-list-ingredient">${ingredient}
-        <div id="actionBar${v}" class="action-bar">
-          <img src="icons/edit.png" id="editIcon${v}" class="button-bar">
-          <div id="moveBar${v}">
-            <img src="icons/move.png" class="button-bar">
-            <div id="${v}moveList" class="move-list-container">
-              ${[...Array(5).keys()].map(i => `<div id="${v}moveList${i + 1}" class="move-list-category"></div>`).join('')}
-            </div>
-          </div>
-          <img id="trashButton${v}" src="icons/trash.png" class="button-bar">
-        </div>
-      </div>`;
-
-    // Find the correct location based on whether the ingredient contains a word from the lists
-    location = findCategory(ingredient);
-
-    // Insert HTML before the correct location
-    location.insertAdjacentHTML("beforebegin", html);
-
-    // Add event listeners dynamically for each action
-    attachEventListeners(v);
-  });
-}
-
 
 
 export function displayMoveBar(index) {
@@ -339,9 +429,7 @@ export function displayMoveBar(index) {
   // Use the closest category container and ensure it exists
   const parentCategory = ingredientElement.closest('.category-list');
 
-  // Log ingredient element and parent category for debugging
-  console.log('Ingredient Element:', ingredientElement);
-  console.log('Parent Category:', parentCategory);
+  
 
   if (!parentCategory) {
     console.error(`Parent category not found for ingredient element with index ${index}`);
@@ -358,6 +446,8 @@ export function displayMoveBar(index) {
     dairyList: ['Produce', 'Meat', 'Pantry', 'Baking', 'Other'],
     otherList: ['Produce', 'Meat', 'Pantry', 'Baking', 'Dairy']
   };
+
+  console.log(produceList)
 
   // Check if the parent location is valid and update the move list categories
   if (categoryMap[parentLocation]) {

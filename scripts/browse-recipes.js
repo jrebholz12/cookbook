@@ -1,9 +1,11 @@
 //Imports needed functions from backend and global
+import { getLastName } from '../backend/docs.js';
 import { importCuisines, populateRecipeShoppingList, hidePreview, ingredientSearch, setShoppingListTitles, sortAZ, sortNewToOld, sortOldToNew, sortRandom } from "../backend//page-folders/backend-browse-recipes.js"
 import { sortTabs } from '../backend/page-folders/global-js.js';
 
 //Start functions
 sortTabs('cookBook', 'cookbook')
+getLastName()
 sortRandom()
 importCuisines()
 

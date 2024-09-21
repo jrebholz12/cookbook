@@ -12,11 +12,46 @@ import {
   signOut
 } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
 
-// On Start-up
-getLastName();
-initiateTheme();
-sortTabs('home', 'home');
+// Wrap all your initialization inside an async function that waits for the user authentication
+async function initializeApp() {
+  // Set persistence for the session
+  await setPersistence(auth, browserLocalPersistence)
+    .then(() => console.log('Persistence set to local.'))
+    .catch((error) => console.error('Error setting persistence:', error.message));
 
+  // Wait for authentication state change
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log('User is signed in:', user);
+
+      // Fetch user data (last name and theme)
+      await getLastName();
+      await initiateTheme();
+
+      // Update UI to reflect sign-in status
+      authLink.innerText = 'Sign Out';
+      document.getElementById('settingsContainer').classList.remove('display-off');
+
+      // Load other DOM-related functions
+      sortTabs('home', 'home');
+
+    } else {
+      console.log('User is signed out');
+      authLink.innerText = 'Sign In';
+      document.getElementById('settingsContainer').classList.add('display-off');
+
+      // You can initialize the theme and other things for unauthenticated users here if needed
+      initiateTheme();
+    }
+  });
+}
+
+// Call this function after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', async () => {
+  await initializeApp(); // Ensure the app initializes after the DOM is ready
+});
+
+// Modal and authentication handling logic remains the same
 const modal = document.getElementById('authModal');
 const authLink = document.getElementById('authLink');
 const closeBtn = document.querySelector('.close');
@@ -28,15 +63,6 @@ const switchToSignIn = document.getElementById('switchToSignIn');
 // Sign In and Sign Up Buttons
 const signInForm = document.getElementById('signInButton');
 const signUpForm = document.getElementById('signUpButton');
-
-// Set persistence when the app initializes
-setPersistence(auth, browserLocalPersistence)
-  .then(() => {
-    console.log('Persistence set to local.');
-  })
-  .catch((error) => {
-    console.error('Error setting persistence:', error.message);
-  });
 
 // Open modal when the sign-in/sign-up link is clicked
 authLink.addEventListener('click', (event) => {
@@ -136,21 +162,6 @@ function signOutUser() {
       console.error('Error signing out:', error.message);
     });
 }
-
-// Monitor authentication state changes
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById('settingsContainer').classList.remove('display-off');
-    console.log('User is signed in:', user);
-    authLink.innerText = 'Sign Out';
-    getLastName(); // Fetch last name from Firestore
-    initiateTheme(); // Apply the user's theme
-  } else {
-    console.log('User is signed out');
-    authLink.innerText = 'Sign In';
-    document.getElementById('settingsContainer').classList.add('display-off');
-  }
-});
 
 // Event Listeners for settings
 document.getElementById('settingsImage').addEventListener('click', toggleSettings);

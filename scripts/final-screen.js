@@ -1,12 +1,14 @@
 //Imports needed functions from backend and global
-import { displayActionBar, displayActionBarOff, displayOtherItems, displayOffOtherItems, insertList, getLength, showShoppingListTitles } from "../backend/page-folders/backend-final-screen.js"
-import { sortTabs, getLastName } from "../backend/page-folders/global-js.js"
+import { getLastName } from "../backend/docs.js"
+import { displayActionBar, displayActionBarOff, displayOtherItems, displayOffOtherItems, showShoppingListTitles } from "../backend/page-folders/backend-final-screen.js"
+import { sortTabs } from "../backend/page-folders/global-js.js"
 
 //Start functions
+
 showShoppingListTitles()
+getLastName
 sortTabs('list', 'list')
-getLength()
-insertList()
+
 
 //Event Listeners
 document.getElementById('windowPrint').addEventListener('click', window.print)
