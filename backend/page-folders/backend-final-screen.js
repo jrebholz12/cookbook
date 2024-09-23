@@ -23,8 +23,12 @@ export async function getCategoryList(user) {
         console.log('Category List:', ingredientCategoryList);
       } else {
         // Initialize with default values if no document found
-        ingredientCategoryList = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
-        [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+        produceList = ['apple']
+        pantryList = ['rice']
+        dairyList = ['milk']
+        meatList = ['ground beef']
+        bakingList = ['salt']
+        otherList = ['wine']
         const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
         await setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
       }
