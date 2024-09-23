@@ -23,14 +23,16 @@ export async function getCategoryList(user) {
         console.log('Category List:', ingredientCategoryList);
       } else {
         // Initialize with default values if no document found
-        let produceList = ['apple']
-        let pantryList = ['rice']
-        let dairyList = ['milk']
-        let meatList = ['ground beef']
-        let bakingList = ['salt']
-        let otherList = ['wine']
-        const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
-        [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+        produceList = ['apple']; // No `let` or `const` here, just assign the global variable
+        pantryList = ['rice'];
+        dairyList = ['milk'];
+        meatList = ['ground beef'];
+        bakingList = ['salt'];
+        otherList = ['wine'];
+        
+        ingredientCategoryList = [produceList, pantryList, dairyList, meatList, bakingList, otherList];
+        
+        const formattedIngredientCategoryList = formatForFirestore(ingredientCategoryList);
         await setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
       }
     } catch (error) {
@@ -40,6 +42,7 @@ export async function getCategoryList(user) {
     console.log("No user is signed in.");
   }
 }
+
 
 // Function to initialize category lists and insert list into the DOM
 async function initializeCategoryListsAndInsert(user) {
