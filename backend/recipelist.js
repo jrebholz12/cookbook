@@ -60,3 +60,31 @@ export function revertFormattedCategoryList(formattedCategoryList) {
   return originalCategoryList;  // You can use a different name here if needed
 }
 
+export function savePageToLocalStorage() {
+  // Get the current HTML of the entire page (inside the <body>)
+  const pageHtml = document.body.innerHTML;
+
+  // Store the HTML content in local storage
+  localStorage.setItem('savedPageHtml', pageHtml);
+
+  // Optionally, alert the user that the save was successful
+  alert('Page content saved to local storage!');
+}
+
+export function showPageFromLocalStorage() {
+  const savedHtml = localStorage.getItem('savedPageHtml');
+  if (savedHtml) {
+    document.body.innerHTML = savedHtml;  // Render the saved HTML to the page
+    alert('Page content loaded from local storage!');
+  }
+}
+
+export function clearPageFromLocalStorage() {
+  const savedHtml = localStorage.getItem('savedPageHtml');
+  if (savedHtml) {
+    localStorage.removeItem('savedPageHtml');
+    alert('Saved page content cleared from local storage!');
+  }
+}
+
+

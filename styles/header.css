@@ -201,11 +201,15 @@
   }
 }
 
+.cuisine-absolute{
+  display: flex;
+}
+
 .cuisine-container{
   flex-direction: column;
+  justify-content: flex-start;
+  margin-left: 20%;
   position: absolute;
-  right: -90px;
-  top: 120px;
   font-size: 13px;
   display: none;
 }

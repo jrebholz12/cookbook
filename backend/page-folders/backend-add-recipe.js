@@ -5,6 +5,8 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.4.0/fir
 
 // Global variable for recipeList
 let recipeList = [];
+let unitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar'];
+
 
 // Function to get the recipe list from Firestore or initialize it if it doesn't exist
 export async function getRecipeList(user) {
@@ -46,12 +48,14 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     console.log("User is signed in:", user);
     getRecipeList(user); // Fetch the user's recipes after they sign in
+    loadUnitInputList(user);
   } else {
     console.log("No user is signed in.");
   }
 });
 
 // Global Variables for adding a recipe
+
 let fullRecipe = {};
 let title = '';
 let website = '';
@@ -64,7 +68,38 @@ let unitList = [];
 let numberList = 0;
 let i = 0;
 
-let unitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar'];
+// Function to load units from Firestore or default to predefined list
+export async function loadUnitInputList() {
+  const user = auth.currentUser;
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'unitList');
+    
+    try {
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        // Get the saved units from Firestore
+        unitInputList = docSnap.data().unitList || defaultUnitInputList;
+        console.log("Custom unit list from Firestore:", unitInputList);
+      } else {
+        // Use the default list if no custom list is found
+        unitInputList = defaultUnitInputList;
+        console.log("Using default unit list:", unitInputList);
+      }
+    } catch (error) {
+      console.error("Error fetching unit list from Firestore:", error);
+      // Fallback to default list in case of error
+      unitInputList = defaultUnitInputList;
+    }
+  } else {
+    // No user is signed in, use default list
+    unitInputList = defaultUnitInputList;
+    console.log("No user signed in. Using default unit list:", unitInputList);
+  }
+}
+
+
 
 
 //Start export functions
@@ -587,6 +622,16 @@ function clearRecipeForm() {
   numberList = 0;
   //alert('Form cleared');
   location.reload();
+}
+
+export function showHelp(category){
+  let location = document.getElementById(`${category}HelpContainer`)
+  
+  if (location.classList.contains('display-on')){
+    location.classList.remove('display-on')
+  } else{
+    location.classList.add('display-on')  }
+  console.log(unitInputList)
 }
 
 

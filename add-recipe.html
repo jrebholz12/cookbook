@@ -55,10 +55,14 @@
           <legend>Recipe Details</legend>
           
           <label for="id-title">Recipe Name</label>
-          <input id="id-title" class="input-field input-title" placeholder="Recipe Name">
+          <div id="recipeNameContainer" class="name-container">
+            <input id="id-title" class="input-field input-title" placeholder="Recipe Name">
+          </div>
           
           <label for="id-website">Source</label>
-          <input id="id-website" class="input-field input-website" placeholder="Source">
+          <div id="recipeNameContainer" class="name-container">
+            <input id="id-website" class="input-field input-website" placeholder="Source">
+          </div>
           
           <label for="id-cuisine">Cuisine</label>
           <input id="id-cuisine" class="input-field input-cuisine" placeholder="Cuisine">
@@ -83,15 +87,45 @@
         <!-- Ingredients Section -->
         <fieldset class="recipe-info recipe-info2">
           <legend>Ingredients</legend>
-          
+
           <label for="id-quantity">Quantity</label>
-          <input id="id-quantity" class="input-field input-quantity" placeholder="Quantity">
-          
+          <div id="quantityInputContainer" class="addRecipe-input-container">
+            <input id="id-quantity" class="input-field input-quantity" placeholder="Quantity">
+            <img id="quantityQuestion" class="question-icon" src="icons/Icon-round-Question_mark.svg.png">
+            <div id="quantityAbsolute">
+              <div id="quantityHelpContainer" class="help-container">
+                <div id="quantityHelpTitle" class="help-title">Quantity</div>
+                <div id="quantityHelpText" class="help-text">Enter in quantity of each ingredient. For fractions, use the decimal version. <br> (i.e. 4 , 0.5 , 0.25)</div>
+              </div>
+            </div>
+          </div>
+
           <label for="id-unit">Unit</label>
-          <input id="id-unit" class="input-field input-unit" placeholder="Unit">
+          <div id="unitInputContainer" class="addRecipe-input-container">
+            <input id="id-unit" class="input-field input-unit" placeholder="Unit"> 
+            <img id="unitQuestion" class="question-icon" src="icons/Icon-round-Question_mark.svg.png">
+
+            <div id="unitAbsolute">
+              <div id="unitHelpContainer" class="help-container">
+                <div id="unitHelpTitle" class="help-title">Unit</div>
+                <div id="unitHelpText" class="help-text">Enter in unit of each ingredient. Only specified units below are accepted. <br> (g, tsp, ea, can, bunch, tbs, quart, gallon, oz, clove, cup, loaf, slice, lb, pack, bunch, jar)</div>
+              </div>
+            </div>
+          </div>
           
           <label for="id-ingredient">Ingredient</label>
-          <input id="id-ingredient" class="input-field input-ingredient" placeholder="Ingredient">
+          <div id="ingredientInputContainer" class="addRecipe-input-container">
+            <input id="id-ingredient" class="input-field input-ingredient" placeholder="Ingredient"> 
+            <img id="ingredientQuestion" class="question-icon" src="icons/Icon-round-Question_mark.svg.png">
+
+            <div id="ingredientAbsolute">
+              <div id="ingredientHelpContainer" class="help-container">
+                <div id="ingredientHelpTitle" class="help-title">Ingredient</div>
+                <div id="ingredientHelpText" class="help-text">Enter in the name of each ingredient. Try to be consistent with your names. <br>(i.e. tomato, parmesan, ground beef)</div>
+              </div>
+            </div>
+          </div>          
+
         </fieldset>
       </div>
 

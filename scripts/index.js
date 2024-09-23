@@ -2,7 +2,7 @@
 import { toggleSettings } from "../backend/page-folders/backend-index.js";
 import { sortTabs } from "../backend/page-folders/global-js.js";
 import { updateLastName, getLastName, changeTheme, initiateTheme } from "../backend/docs.js";
-import { auth } from '../backend/firebase.js';
+import { auth, db } from '../backend/firebase.js';
 import {
   createUserWithEmailAndPassword,
   setPersistence,
@@ -11,18 +11,55 @@ import {
   onAuthStateChanged,
   signOut
 } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js';
+
+let defaultUnitInputList = ['g','tsp', 'ea', 'can', 'bunch', 'tbs', 'quart', 'gallon', 'oz', 'clove', 'cup', 'loaf', 'slice', 'lb', 'pack', 'bunch', 'jar'];
+let unitInputList = [];
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loadUnitInputList(user);
+  } else {
+  }
+});
+
+// Function to load units from Firestore or default to predefined list
+export async function loadUnitInputList() {
+  const user = auth.currentUser;
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid, 'data', 'unitList');
+    
+    try {
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        // Get the saved units from Firestore
+        unitInputList = docSnap.data().unitList || defaultUnitInputList;
+      } else {
+        // Use the default list if no custom list is found
+        unitInputList = defaultUnitInputList;
+      }
+    } catch (error) {
+      console.error("Error fetching unit list from Firestore:", error);
+      // Fallback to default list in case of error
+      unitInputList = defaultUnitInputList;
+    }
+  } else {
+    // No user is signed in, use default list
+    unitInputList = defaultUnitInputList;
+  }
+}
 
 // Wrap all your initialization inside an async function that waits for the user authentication
 async function initializeApp() {
   // Set persistence for the session
   await setPersistence(auth, browserLocalPersistence)
-    .then(() => console.log('Persistence set to local.'))
     .catch((error) => console.error('Error setting persistence:', error.message));
 
   // Wait for authentication state change
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log('User is signed in:', user);
 
       // Fetch user data (last name and theme)
       await getLastName();
@@ -36,7 +73,6 @@ async function initializeApp() {
       sortTabs('home', 'home');
 
     } else {
-      console.log('User is signed out');
       authLink.innerText = 'Sign In';
       document.getElementById('settingsContainer').classList.add('display-off');
 
@@ -108,7 +144,6 @@ signUpForm.addEventListener('click', () => {
 
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      console.log('User signed up:', userCredential.user);
       modal.style.display = 'none'; // Close modal on successful sign-up
     })
     .catch((error) => {
@@ -124,7 +159,6 @@ signInForm.addEventListener('click', () => {
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      console.log('User signed in:', userCredential.user);
       modal.style.display = 'none'; // Close modal on successful sign-in
     })
     .catch((error) => {
@@ -152,7 +186,6 @@ function displayError(message) {
 function signOutUser() {
   signOut(auth)
     .then(() => {
-      console.log('User signed out');
       authLink.innerText = 'Sign In';
       document.getElementById('settingsContainer').classList.add('display-off');
       document.getElementById('familyName').innerHTML = 'Your Name Here';

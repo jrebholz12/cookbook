@@ -6,6 +6,7 @@ import { formatForFirestore, revertFormattedCategoryList } from '../recipelist.j
 let finalFinalList = JSON.parse(localStorage.getItem('finalFinalList')) || [];
 let ingredientCategoryList = [];
 let produceList, pantryList, dairyList, meatList, bakingList, otherList; // Declare globally
+let otherItemsId = 1
 
 // Function to get the recipe list from Firestore or initialize it if it doesn't exist
 export async function getCategoryList(user) {
@@ -96,7 +97,8 @@ export async function insertList() {
 
     location = findCategory(ingredient);
     location.insertAdjacentHTML("beforebegin", html);
-    attachEventListeners(v);  // Add event listeners dynamically for each action
+    attachEventListeners(v);  // Add event listeners dynamically for each action 
+    otherItemsId++
   });
 }
 
@@ -171,7 +173,7 @@ export function displayOffOtherItems(paragraph) {
   toggleDisplayState(paragraph, false);
 }
 
-function toggleDisplayState(paragraph, state) {
+export function toggleDisplayState(paragraph, state) {
   const plusButton = document.getElementById(`otherPlusButton-${paragraph}`);
   const minusButton = document.getElementById(`otherMinusButton-${paragraph}`);
   const inputButton = document.getElementById(`otherInputBar-${paragraph}`);
@@ -227,11 +229,29 @@ export function editIngredient(index) {
 export function saveEdit(event, index) {
   if (event.key === "Enter") {
     const editLocation = document.getElementById(`editInput${index}`).value;
+
+    // Rebuild the original structure with the new value from the input
+    const updatedHtml = `
+      ${editLocation} 
+      <div id="actionBar${index}" class="action-bar">
+        <img src="icons/edit.png" id="editIcon${index}" class="button-bar">
+        <div id="moveBar${index}">
+          <img src="icons/move.png" class="button-bar">
+          <div id="${index}moveList" class="move-list-container">
+            ${[...Array(5).keys()].map(i => `<div id="${index}moveList${i + 1}" class="move-list-category"></div>`).join('')}
+          </div>
+        </div>
+        <img id="trashButton${index}" src="icons/trash.png" class="button-bar">
+      </div>
+    `;
+
     const permLocation = document.getElementById(`ing${index}`);
-    permLocation.innerHTML = editLocation;
-    attachEventListeners(index); // Reattach the event listeners after editing
+    permLocation.innerHTML = updatedHtml;
+
+    attachEventListeners(index); // Reattach event listeners after updating the HTML
   }
 }
+
 
 // Function to move an item between categories and update Firestore
 export async function makeTheMove(index) {

@@ -2,6 +2,7 @@
 import { getLastName } from '../backend/docs.js';
 import { importCuisines, populateRecipeShoppingList, hidePreview, ingredientSearch, setShoppingListTitles, sortAZ, sortNewToOld, sortOldToNew, sortRandom } from "../backend//page-folders/backend-browse-recipes.js"
 import { sortTabs } from '../backend/page-folders/global-js.js';
+import { clearPageFromLocalStorage } from '../backend/recipelist.js';
 
 //Start functions
 sortTabs('cookBook', 'cookbook')
@@ -18,6 +19,7 @@ document.getElementById('randomSort').addEventListener('click', sortRandom)
 document.getElementById('search-bar-input').addEventListener('keydown', (event)=>ingredientSearch(event))
 document.getElementById('exitButton').addEventListener('click', hidePreview)
 
+//document.getElementById('getIngredients').addEventListener('click', clearPageFromLocalStorage)
 document.getElementById('getIngredients').addEventListener('click', populateRecipeShoppingList)
 
 

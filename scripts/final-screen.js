@@ -1,41 +1,56 @@
 //Imports needed functions from backend and global
 import { getLastName } from "../backend/docs.js"
-import { displayActionBar, displayActionBarOff, displayOtherItems, displayOffOtherItems, showShoppingListTitles } from "../backend/page-folders/backend-final-screen.js"
+import { toggleDisplayState, showShoppingListTitles, addOtherItem } from "../backend/page-folders/backend-final-screen.js"
 import { sortTabs } from "../backend/page-folders/global-js.js"
+import { savePageToLocalStorage, showPageFromLocalStorage } from "../backend/recipelist.js"
 
 //Start functions
 
+//showPageFromLocalStorage()
 showShoppingListTitles()
 getLastName
 sortTabs('list', 'list')
 
 
 //Event Listeners
-document.getElementById('windowPrint').addEventListener('click', window.print)
+document.getElementById('windowPrint').addEventListener('click', function() {
+  window.print();
+});
+//document.getElementById('homeTab').addEventListener('click', savePageToLocalStorage);
+//document.getElementById('recipeBoxTab').addEventListener('click', savePageToLocalStorage);
+//document.getElementById('cookBookTab').addEventListener('click', savePageToLocalStorage);
+//document.getElementById('listTab').addEventListener('click', savePageToLocalStorage);
 
-document.getElementById('otherPlusButton-produce').addEventListener('click', ()=>displayOtherItems('produce'))
-document.getElementById('otherInputBar-produce').addEventListener('keydown', (event)=>displayOtherItems(event, 'produce'))
-document.getElementById('otherMinusButton-produce').addEventListener('click', ()=>displayOffOtherItems('produce'))
+function setupEventListenersForCategory(category) {
+  // Add event listeners for plus, minus, and input elements of a given category
+  document.getElementById(`otherPlusButton-${category}`).addEventListener('click', () => toggleDisplayState(category, true));
+  document.getElementById(`otherInputBar-${category}`).addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      toggleDisplayState(category, true);
+    }
+  });
+  document.getElementById(`otherMinusButton-${category}`).addEventListener('click', () => toggleDisplayState(category, false));
+}
 
-document.getElementById('otherPlusButton-meat').addEventListener('click', ()=>displayOtherItems('meat'))
-document.getElementById('otherInputBar-meat').addEventListener('keydown', (event)=>displayOtherItems(event, 'meat'))
-document.getElementById('otherMinusButton-meat').addEventListener('click', ()=>displayOffOtherItems('meat'))
+// Initialize event listeners for each category
+['produce', 'meat', 'pantry', 'baking', 'dairy', 'other'].forEach(category => {
+  setupEventListenersForCategory(category);
+});
 
-document.getElementById('otherPlusButton-pantry').addEventListener('click', ()=>displayOtherItems('pantry'))
-document.getElementById('otherInputBar-pantry').addEventListener('keydown', (event)=>displayOtherItems(event, 'pantry'))
-document.getElementById('otherMinusButton-pantry').addEventListener('click', ()=>displayOffOtherItems('pantry'))
+function setupAddOtherItemEventListeners(category) {
+  document.getElementById(`otherInputBar-${category}`).addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      addOtherItem(event, category);
+    }
+  });
+}
 
-document.getElementById('otherPlusButton-baking').addEventListener('click', ()=>displayOtherItems('baking'))
-document.getElementById('otherInputBar-baking').addEventListener('keydown', (event)=>displayOtherItems(event, 'baking'))
-document.getElementById('otherMinusButton-baking').addEventListener('click', ()=>displayOffOtherItems('baking'))
+// Initialize event listeners for each category
+['produce', 'meat', 'pantry', 'baking', 'dairy', 'other'].forEach(category => {
+  setupAddOtherItemEventListeners(category);
+});
 
-document.getElementById('otherPlusButton-dairy').addEventListener('click', ()=>displayOtherItems('dairy'))
-document.getElementById('otherInputBar-dairy').addEventListener('keydown', (event)=>displayOtherItems(event, 'dairy'))
-document.getElementById('otherMinusButton-dairy').addEventListener('click', ()=>displayOffOtherItems('dairy'))
 
-document.getElementById('otherPlusButton-other').addEventListener('click', ()=>displayOtherItems('other'))
-document.getElementById('otherInputBar-other').addEventListener('keydown', (event)=>displayOtherItems(event, 'other'))
-document.getElementById('otherMinusButton-other').addEventListener('click', ()=>displayOffOtherItems('other'))
 
 
 

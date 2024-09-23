@@ -10,7 +10,6 @@ export function checkUserAuth(callback) {
       callback(user);
     } else {
       // User is signed out
-      console.log("No user is signed in.");
     }
   });
 }
@@ -36,7 +35,6 @@ export function updateLastName(event) {
         lastName: name
       }, { merge: true }) // 'merge: true' will update only the last name, keeping other fields intact
       .then(() => {
-        console.log("Last name saved to Firestore!");
       })
       .catch((error) => {
         console.error("Error saving last name to Firestore: ", error);
@@ -61,31 +59,26 @@ export async function getLastName(user) {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const name = data.lastName || '';
-        console.log(name);
 
         if (name) {
           document.getElementById('familyName').innerHTML = name;
         }
       } else {
-        console.log("No such document!");
       }
     } catch (error) {
       console.error("Error fetching last name from Firestore: ", error);
     }
   } else {
     document.getElementById('familyName').innerHTML = "";
-    console.log("No user is signed in.");
   }
 }
 
 // Listen to authentication state changes
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log("User is signed in:", user);
     // Call getLastName when the user is signed in
     getLastName(user);
   } else {
-    console.log("No user is signed in.");
     document.getElementById('familyName').innerHTML = "Your Name Here";
   }
 });
@@ -123,7 +116,6 @@ export async function changeTheme(theme) {
     const userDocRef = doc(db, 'users', user.uid); // Reference to the user's Firestore document
     try {
       await updateDoc(userDocRef, { theme: theme });
-      console.log("Theme updated in Firestore:", theme);
     } catch (error) {
       console.error("Error updating theme in Firestore: ", error);
     }
@@ -150,9 +142,14 @@ export async function initiateTheme() {
       console.error("Error retrieving theme from Firestore:", error);
     }
   } else {
-    console.log("No user is signed in. Using default theme.");
   }
 
+  // Only insert HTML after verifying the user's theme
+  applyTheme(theme, location);
+}
+
+// Separate function to apply the theme and insert HTML
+function applyTheme(theme, location) {
   // Apply the theme to the DOM
   document.body.style.backgroundImage = `url('pictures/${theme}wallpaper.jpg')`;
   const html = `
@@ -175,8 +172,10 @@ export async function initiateTheme() {
       </div>
     </div>
   `;
-  
-  location.innerHTML = html
+
+  location.innerHTML = html;
   document.body.style.backgroundSize = '80%';
 }
+
+
 

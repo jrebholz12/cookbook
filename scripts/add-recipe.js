@@ -1,5 +1,5 @@
 //Imports needed functions from backend and global
-import { saveRecipe, printRecipe, deleteRecipe, addIngredient, populateRecipeBox, addField, previewImage, searchRecipes } from '../backend/page-folders/backend-add-recipe.js'
+import { saveRecipe, printRecipe, deleteRecipe, addIngredient, populateRecipeBox, addField, previewImage, searchRecipes, showHelp } from '../backend/page-folders/backend-add-recipe.js'
 import { getLastName } from '../backend/docs.js';
 import { sortTabs } from "../backend/page-folders/global-js.js"
 import { auth } from '../backend/firebase.js'
@@ -41,6 +41,17 @@ document.getElementById('printButton').addEventListener('click', printRecipe)
 document.getElementById('deleteButton').addEventListener('click', deleteRecipe)
 
 document.getElementById('cutting-search').addEventListener('keyup', searchRecipes)
+
+document.getElementById('ingredientQuestion').addEventListener('mouseover', () => showHelp('ingredient'));
+document.getElementById('ingredientQuestion').addEventListener('mouseout', () => showHelp('ingredient'));
+
+document.getElementById('unitQuestion').addEventListener('mouseover', () => showHelp('unit'));
+document.getElementById('unitQuestion').addEventListener('mouseout', () => showHelp('unit'));
+
+document.getElementById('quantityQuestion').addEventListener('mouseover', () => showHelp('quantity'));
+document.getElementById('quantityQuestion').addEventListener('mouseout', () => showHelp('quantity'));
+
+
 
 
 
