@@ -125,27 +125,34 @@ export function addField(event, field) {
   const recipeInput = document.getElementById(`id-${field}`);
   const recipeField = document.querySelector(`.${field}-onscreen`);
 
-  if ((event.key === "Enter" || event.key === 'Tab') && recipeInput.value.trim()) {
-    event.preventDefault();
+  // Handle both 'keydown' and 'blur'
+  const shouldProceed = (event.type === 'blur' && recipeInput.value.trim()) ||
+                        ((event.key === "Enter" || event.key === 'Tab') && recipeInput.value.trim());
+
+  if (shouldProceed) {
+    if (event.key === 'Enter' || event.key === 'Tab') {
+      event.preventDefault(); // Prevent default only for keydown events
+    }
 
     const fieldValue = recipeInput.value.toLowerCase();
     fullRecipe[field] = fieldValue;
 
     if (field === 'picture') {
-      // If the field is 'picture', trigger previewImage to show the image
-      previewImage();
+      previewImage();  // If the field is 'picture', trigger image preview
     } else if (recipeField) {
-      // If it's not the picture field, update the onscreen field with formatted text
       recipeField.innerHTML = formatField(field, fieldValue);
     }
 
-    // Focus on the next input field based on the current field
-    const nextField = getNextField(field);
-    if (nextField) {
-      document.getElementById(nextField).focus();
+    // Focus on the next input field based on the current field (only for keydown)
+    if (event.type !== 'blur') {
+      const nextField = getNextField(field);
+      if (nextField) {
+        document.getElementById(nextField).focus();
+      }
     }
   }
 }
+
 
 
 function formatField(field, value) {
@@ -395,54 +402,67 @@ function displayIngredient(index, ingredient, quantity, unit) {
 
 
 
-export function addIngredient(event) {
+export function addIngredient(event, field) {
   const ingredientInput = document.querySelector('.input-ingredient');
   const quantityInput = document.querySelector('.input-quantity');
   const unitInput = document.querySelector('.input-unit');
 
-  // Check if the event is triggered by Enter, Space, or Tab and quantity is filled but unit is missing
-  if (["Enter", " ", "Tab"].includes(event.key) && quantityInput.value && !unitInput.value) {
-    event.preventDefault();
-    document.getElementById('id-unit').focus();
+  // If the event is "blur", we don't want to focus on the next input
+  if (event.type === 'blur') {
+    if (ingredientInput.value && quantityInput.value && unitInput.value) {
+      processIngredientInput(ingredientInput, quantityInput, unitInput);
+    }
     return;
   }
 
-  // Check if the event is triggered and unit is valid, but ingredient is missing
-  if (["Enter", " ", "Tab"].includes(event.key) && quantityInput.value && unitInputList.includes(unitInput.value) && !ingredientInput.value) {
-    event.preventDefault();
-    document.getElementById('id-ingredient').focus();
-    return;
-  }
-
-  // If all fields are filled (ingredient, quantity, and unit), add the ingredient to the lists
-  if (["Enter", "Tab"].includes(event.key) && ingredientInput.value && quantityInput.value && unitInput.value) {
+  // Prevent navigation on space only for 'quantity' and 'unit' fields
+  if (["Enter", "Tab"].includes(event.key) || ([" "].includes(event.key) && field !== 'ingredient')) {
     event.preventDefault();
 
-    const ingredient = ingredientInput.value.trim().toLowerCase();
-    const quantity = quantityInput.value.trim().toLowerCase();
-    const unit = unitInput.value.trim().toLowerCase();
+    // If quantity is filled but unit is missing, move to unit input
+    if (field === 'quantity' && quantityInput.value && !unitInput.value) {
+      document.getElementById('id-unit').focus();
+      return;
+    }
 
-    // Add to the lists
-    ingredientList.push(ingredient);
-    quantityList.push(quantity);
-    unitList.push(unit);
+    // If unit is filled but ingredient is missing, move to ingredient input
+    if (field === 'unit' && quantityInput.value && unitInputList.includes(unitInput.value) && !ingredientInput.value) {
+      document.getElementById('id-ingredient').focus();
+      return;
+    }
 
-    // Determine the location to append based on the numberList
-    const columnIndex = numberList < 10 ? '' : numberList < 20 ? '2id' : '3id';
-
-    // Generate and insert the HTML for quantity, unit, and ingredient
-    appendIngredientHTML(numberList, ingredient, quantity, unit, columnIndex);
-
-    // Clear the input fields
-    ingredientInput.value = '';
-    quantityInput.value = '';
-    unitInput.value = '';
-
-    // Increment the number of ingredients and focus on the quantity field
-    numberList++;
-    document.getElementById('id-quantity').focus();
+    // If all fields are filled, add the ingredient to the list
+    if (ingredientInput.value && quantityInput.value && unitInput.value) {
+      processIngredientInput(ingredientInput, quantityInput, unitInput);
+      document.getElementById('id-quantity').focus();
+    }
   }
 }
+
+function processIngredientInput(ingredientInput, quantityInput, unitInput) {
+  const ingredient = ingredientInput.value.trim().toLowerCase();
+  const quantity = quantityInput.value.trim().toLowerCase();
+  const unit = unitInput.value.trim().toLowerCase();
+
+  // Add to the lists
+  ingredientList.push(ingredient);
+  quantityList.push(quantity);
+  unitList.push(unit);
+
+  // Append the ingredient to the DOM
+  const columnIndex = numberList < 10 ? '' : numberList < 20 ? '2id' : '3id';
+  appendIngredientHTML(numberList, ingredient, quantity, unit, columnIndex);
+
+  // Clear the input fields
+  ingredientInput.value = '';
+  quantityInput.value = '';
+  unitInput.value = '';
+
+  // Increment the number of ingredients
+  numberList++;
+}
+
+
 
 function appendIngredientHTML(index, ingredient, quantity, unit, columnSuffix) {
   const quantityLocation = document.getElementById(`quantity${columnSuffix}`);

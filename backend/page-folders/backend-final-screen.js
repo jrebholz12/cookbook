@@ -58,7 +58,7 @@ async function initializeCategoryListsAndInsert(user) {
 // Insert List into DOM
 export async function insertList() {
   console.log("Inserting list...");
-  console.log(ingredientCategoryList + ' this is it');
+  console.log(ingredientCategoryList);
 
   if (!Array.isArray(finalFinalList) || finalFinalList.length === 0) {
     console.error('finalFinalList is not an array or is empty.');

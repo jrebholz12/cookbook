@@ -24,17 +24,46 @@ sortTabs('recipeBox', 'recipe-box');
 
 
 //Event Listeners
-document.getElementById('id-title').addEventListener('keydown', (event) => addField(event, 'title'));
-document.getElementById('id-website').addEventListener('keydown', (event) => addField(event, 'website'));
-document.getElementById('id-cuisine').addEventListener('keydown', (event) => addField(event, 'cuisine'));
-document.getElementById('id-servings').addEventListener('keydown', (event) => addField(event, 'servings'));
-document.getElementById('id-picture').addEventListener('keydown', (event) => addField(event, 'picture'));
+const fields = [
+  { id: 'id-title', fieldName: 'title' },
+  { id: 'id-website', fieldName: 'website' },
+  { id: 'id-cuisine', fieldName: 'cuisine' },
+  { id: 'id-servings', fieldName: 'servings' },
+  { id: 'id-picture', fieldName: 'picture' }
+];
+
+fields.forEach(({ id, fieldName }) => {
+  const element = document.getElementById(id);
+  
+  ['keydown', 'blur'].forEach(eventType => {
+    element.addEventListener(eventType, (event) => addField(event, fieldName));
+  });
+});
+
 
 document.getElementById('previewImageUpload').addEventListener('click', previewImage)
 
-document.getElementById('id-quantity').addEventListener('keydown', (event)=> addIngredient(event))
-document.getElementById('id-unit').addEventListener('keydown', (event)=> addIngredient(event))
-document.getElementById('id-ingredient').addEventListener('keydown', (event)=> addIngredient(event))
+document.addEventListener('DOMContentLoaded', () => {
+  ['keydown', 'blur'].forEach(eventType => {
+    const quantityElement = document.getElementById('id-quantity');
+    const unitElement = document.getElementById('id-unit');
+    const ingredientElement = document.getElementById('id-ingredient');
+  
+    if (quantityElement) {
+      quantityElement.addEventListener(eventType, (event) => addIngredient(event, 'quantity'));
+    }
+  
+    if (unitElement) {
+      unitElement.addEventListener(eventType, (event) => addIngredient(event, 'unit'));
+    }
+  
+    if (ingredientElement) {
+      ingredientElement.addEventListener(eventType, (event) => addIngredient(event, 'ingredient'));
+    }
+  });  
+});
+
+
 
 document.getElementById('saveButton').addEventListener('click', saveRecipe)
 document.getElementById('printButton').addEventListener('click', printRecipe)
