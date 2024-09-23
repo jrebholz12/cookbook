@@ -26,7 +26,7 @@ export async function getCategoryList(user) {
         ingredientCategoryList = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
         [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
         const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
-        setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
+        await setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
       }
     } catch (error) {
       console.error("Error fetching ingredientCategoryList from Firestore:", error);
