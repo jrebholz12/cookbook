@@ -30,6 +30,7 @@ export async function getCategoryList(user) {
         bakingList = ['salt']
         otherList = ['wine']
         const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
+        [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
         await setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
       }
     } catch (error) {
