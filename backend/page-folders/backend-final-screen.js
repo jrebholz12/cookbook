@@ -23,7 +23,8 @@ export async function getCategoryList(user) {
         console.log('Category List:', ingredientCategoryList);
       } else {
         // Initialize with default values if no document found
-        ingredientCategoryList = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
+        let element = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
+        ingredientCategoryList = revertFormattedCategoryList(element)
         [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
         await setDoc(userDocRef, { ingredientCategoryList });
       }
