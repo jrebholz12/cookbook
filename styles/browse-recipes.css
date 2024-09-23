@@ -6,76 +6,123 @@ body{
   width: 10px;
 }
 
-.recipe-title-container{
+/* Recipe Grid Layout */
+#recipeGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin: 70px 0px 50px 20px;
-  
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin-top: 80px;
 }
 
-.recipe-a, .recipe-b, .recipe-c{
-  min-width: 456px;
-}
-
-
-
-
-.recipe-box-container{
+/* Recipe Box Container */
+.recipe-box-container {
   display: flex;
   flex-direction: column;
-  position: relative;
   align-items: center;
   justify-content: center;
-  justify-self: center;
-  align-content: center;
-  height: 200px;
-  align-content: center;
-  width: 450px;
-  margin: 1px;
-  margin-bottom: 20px;
-}
-
-.title-and-picture{
-  display: flex;
-  border: 2px solid black;
+  position: relative;
+  height: 250px;
+  width: 100%;
+  /*border: 2px solid black;*/
   border-radius: 10px;
-  justify-content: center;
-  height: 203.2px;
-  width: 453.2px;
-  transition: all 0.15s;
-
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box; /* Include border in element size */
+  overflow: hidden; /* Ensure content stays within the border */
 }
 
-.title-and-picture:hover{
+/* Normal State */
+.title-and-picture {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border: 2px solid black; /* Black border in normal state */
+  transition: all 0.2s ease-in-out;
+  border-radius: 10px;
+  box-sizing: border-box; /* Ensures border doesn't affect dimensions */
+}
+
+/* Hover Effects */
+.title-and-picture:hover {
   cursor: pointer;
-  color: black;
-  .recipe-picture{
-    opacity: .3;
-  }
-  .just-name{
-    opacity: 1;
-  }
-  .preview-button{
-    opacity: 1;
-  }
+  transform: scale(1.05); /* Slight scaling effect */
 }
 
-.title-and-picture-selected{
+/* Selected State with Green Border */
+.title-and-picture-selected {
   display: flex;
   justify-content: center;
-  height: 203.2px;
-  width: 453.2px;
-  transition: all 0.15s;
-  border: 4px solid green;
+  position: relative;
+  height: 100%; /* Maintain full height */
+  width: 100%; /* Maintain full width */
+  transition: all 0.2s ease-in-out;
+  border: 4px solid green; /* Green border for selected state */
   border-radius: 10px;
-  .recipe-picture{
-    opacity: .3;
-  }
-  .just-name{
-    opacity: 1;
-  }
-
+  box-sizing: border-box; /* Include border in dimensions */
+  /* Remove the black border when selected */
+  border-color: green;
 }
+
+/* Recipe Image */
+.recipe-picture {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure image covers the entire container */
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover Effects for Image Only */
+.title-and-picture:hover .recipe-picture,
+.title-and-picture-selected .recipe-picture {
+  opacity: 0.5; /* Only the image has reduced opacity */
+}
+
+.title-and-picture-selected:hover{
+  cursor: pointer;
+}
+
+/* Name Overlay */
+.just-name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  padding: 0 10px;
+  word-wrap: break-word;
+  opacity: 0;
+  z-index: 2;
+  transition: all 0.2s ease-in-out;
+
+  /* Adding black border to the text */
+  -webkit-text-stroke: .5px black; /* For WebKit browsers */
+  text-stroke: .5px black; /* For other modern browsers */
+}
+
+
+.title-and-picture:hover .just-name,
+.title-and-picture-selected .just-name {
+  opacity: 1;
+}
+
+
+
+
+
+
+
 
 .preview-button{
   position: absolute;
@@ -128,10 +175,6 @@ padding: 0px 8px;
   font-size: 16px;
   opacity: 1;
 }
-
-.title-and-picture-selected:hover{
-  cursor: pointer;
-}
   
 
 
@@ -143,28 +186,6 @@ padding: 0px 8px;
   display: flex;
 }
 
-.just-name{
-  display: flex;
-  font-size: 25px;
-  font-weight: bold;
-  transition: all 0.15s;
-  z-index: 300;
-  align-items: center;
-  opacity: 0;
-}
-
-.recipe-picture{
-  position: absolute;
-  border-radius: 10px;
-  top: 0px;
-  left: -2px;
-  height: 200px;
-  width: 454px; 
-  object-fit: cover;
-  z-index: -10;
-  opacity: 1;
-  transition: all 0.15s;
-}
 
 .recipe-popup{
   position: fixed;

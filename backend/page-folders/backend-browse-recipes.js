@@ -57,14 +57,11 @@ onAuthStateChanged(auth, (user) => {
 
 
 // Global Variables for browsing a recipe
-let quantityTracker = []
 let shoppingRecipeList = []
-let titleList = []
 let searchList = []
 let searchIndexList = []
 let indexList = []
 let ingid = 0
-let ingidExtra = 0
 let searchItems = []
 let finalIngredientList = []
 let finalQuantityList = []
@@ -78,6 +75,7 @@ let shoppingHTML = ''
 export function setShoppingListTitles(){
   let shoppingListTitles = document.getElementById('nextPage')
   localStorage.setItem('shoppingListTitles', shoppingListTitles.innerHTML);
+  console.log(shoppingListTitles)
 }
 
 export function reHighlightClasses(){
@@ -105,6 +103,10 @@ export function reHighlightClasses(){
 
 }
 
+
+
+
+
 export function importCuisines(){
   let cuisineList = []
   cuisineList = []
@@ -130,60 +132,37 @@ export function importCuisines(){
 }
 
 
-export function findTitle(){
-  let classMarker = 'a'
-  let i = 0
-  let recipeListNewToOld = recipeList.reverse()
-  for (let recipeIndexNumber = 0; recipeIndexNumber < recipeList.length; recipeIndexNumber++){
-  let newRecipeTitle = recipeListNewToOld[recipeIndexNumber].title
-  let newRecipePicture = recipeListNewToOld[recipeIndexNumber].picture
-  let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-  let html = 
-  ` <div class="recipe-box-container">
-      <div id="box${i}" class="title-and-picture">
-        <img id="picture${i}" src="${newRecipePicture}" class="recipe-picture">
-        <div id="name${i}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-      </div>
-      <div id="quantityContainer${i}" class="quantity-container"><div id="minusButton${i}" class="minus-button">-</div><div>/</div><div id="plusButton${i}" class="plus-button">+</div></div>
-      <div id="previewButton${i}" class="preview-button"><p>Preview</p></div>
-    </div>
-    `
-  exisitingRecipes.insertAdjacentHTML("beforeend", html)
-  // Select the newly created element
-  const newElement1 = document.getElementById(`box${i}`);
-    
-  // Add an event listener to the new element using an arrow function
-  newElement1.addEventListener('click', () => addToRecipeBox(`${i}`));
+export function findTitle() {
+  let gridContainer = document.getElementById('recipeGrid');
+  gridContainer.innerHTML = '';  // Clear any existing content
+  
+  for (let i = 0; i < recipeList.length; i++) {
+    let newRecipeTitle = recipeList[i].title;
+    let newRecipePicture = recipeList[i].picture;
 
-  // Select the newly created element
-  const newElement2 = document.getElementById(`minusButton${i}`);
-    
-  // Add an event listener to the new element using an arrow function
-  newElement2.addEventListener('click', () => subtractQuantity(`${i}`));
+    let html = `
+      <div class="recipe-box-container">
+        <div id="box${i}" class="title-and-picture">
+          <img id="picture${i}" src="${newRecipePicture}" class="recipe-picture">
+          <div id="name${i}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
+        </div>
+        <div id="quantityContainer${i}" class="quantity-container">
+          <div id="minusButton${i}" class="minus-button">-</div><div>/</div>
+          <div id="plusButton${i}" class="plus-button">+</div>
+        </div>
+        <div id="previewButton${i}" class="preview-button"><p>Preview</p></div>
+      </div>`;
 
-  // Select the newly created element
-  const newElement3 = document.getElementById(`previewButton${i}`);
-    
-  // Add an event listener to the new element using an arrow function
-  newElement3.addEventListener('click', () => showPreview(`${i}`));
+    gridContainer.insertAdjacentHTML("beforeend", html);
 
-  // Select the newly created element
-  const newElement4 = document.getElementById(`plusButton${i}`);
-    
-  // Add an event listener to the new element using an arrow function
-  newElement4.addEventListener('click', () => addQuantity(`${i}`));
-
-
-  if(classMarker === 'a'){
-    classMarker = 'b'
-  } else if(classMarker === 'b') {
-    classMarker = 'c'
-  } else{
-    classMarker = 'a'
-  }
-  i++
+    // Add event listeners for each recipe card
+    document.getElementById(`box${i}`).addEventListener('click', () => addToRecipeBox(`${i}`));
+    document.getElementById(`minusButton${i}`).addEventListener('click', () => subtractQuantity(`${i}`));
+    document.getElementById(`plusButton${i}`).addEventListener('click', () => addQuantity(`${i}`));
+    document.getElementById(`previewButton${i}`).addEventListener('click', () => showPreview(`${i}`));
   }
 }
+
 
 function sortCuisines(cuisine){
 
@@ -199,383 +178,280 @@ function sortCuisines(cuisine){
 
 }
 
-export function ingredientSearch(event){
-  let ingredientBox = document.getElementById('ingLocation')
 
-  if(searchList.length<1){
-    if(event.key === "Enter" && document.getElementById('search-bar-input').value != "" && document.getElementById('search-bar-input').value != null){
-      let searchtext = document.getElementById('search-bar-input').value
-      searchItems.push(searchtext)
-      let html = `<div id="ingredientName${ingid}" class="search-ingredient"><strong>x </strong><div id="nameName${ingid}" class="search-ingredient-name">${searchtext}</div></div>`
+export function ingredientSearch(event) {
+  let ingredientBox = document.getElementById('ingLocation');
+  const id = ingid
+  if (searchList.length < 1) {
+    if (event.key === "Enter" && document.getElementById('search-bar-input').value.trim() !== "") {
+      let searchtext = document.getElementById('search-bar-input').value;
+      searchItems.push(searchtext);
       
-      //console.log(ingid + "$$")
-      ingredientBox.insertAdjacentHTML("beforeend", html)
-        // Select the newly created element
-        const newElement = document.getElementById(`ingredientName${ingid}`);
+      let html = `<div id="ingredientName${id}" class="search-ingredient"><strong>x </strong><div id="nameName${id}" class="search-ingredient-name">${searchtext}</div></div>`;
       
-        // Add an event listener to the new element using an arrow function
-        const newingid = ingid
-        console.log(newingid + "ee")
-        newElement.addEventListener('click', () => deleteSearch(newingid));
-
-        ingid ++
-      document.getElementById('search-bar-input').value = ""
-      console.log(recipeList)
-    loop1: for(let i=0; i<recipeList.length; i++){
-      let ingredientsList = recipeList[i].ingredients[0]
-      loop2: for(let t=0; t<ingredientsList.length; t++){
-        if(recipeList[i].ingredients[0][t].includes(searchtext) || recipeList[i].title.includes(searchtext) || recipeList[i].cuisine.includes(searchtext) ){
-          indexList.push(i)
-          continue loop1
-        } else continue loop2
-      }
-      }
-  
-      for(let i=0; i<indexList.length;i++){
-        searchList.push(recipeList[indexList[i]])
-        searchIndexList.push(indexList[i])
-      }
-  
-    document.getElementById('recipeA').innerHTML = ''
-    document.getElementById('recipeB').innerHTML = ''
-    document.getElementById('recipeC').innerHTML = ''
-  
-    let classMarker = 'a'
-    for(let i = 0; i<indexList.length; i++){
-      let newRecipeTitle = recipeList[indexList[i]].title
-      let newRecipePicture = recipeList[indexList[i]].picture
-      let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-      let html = 
-      ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySub${indexList[i]}" class="minus-button">-</div><div>/</div><div id="quantityAdd${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShow${indexList[i]}" class="preview-button"><p>Preview</p></div>
-        </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
-
+      ingredientBox.insertAdjacentHTML("beforeend", html);
+      
       // Select the newly created element
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-        
+      const newElement = document.getElementById(`ingredientName${id}`);
+      
       // Add an event listener to the new element using an arrow function
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
+      newElement.addEventListener('click', () => deleteSearch(`${id}`));
+      ingid++;
+      document.getElementById('search-bar-input').value = "";
 
-      // Select the newly created element
-      const newElement2 = document.getElementById(`quantitySub${indexList[i]}`);
-        
-      // Add an event listener to the new element using an arrow function
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      // Select the newly created element
-      const newElement3 = document.getElementById(`quantityAdd${indexList[i]}`);
-        
-      // Add an event listener to the new element using an arrow function
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      // Select the newly created element
-      const newElement4 = document.getElementById(`previewShow${indexList[i]}`);
-        
-      // Add an event listener to the new element using an arrow function
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-
-      if(classMarker === 'a'){
-        classMarker = 'b'
-      } else if(classMarker === 'b') {
-        classMarker = 'c'
-      } else{
-        classMarker = 'a'
-      }
-      }
-      reHighlightClasses()
-      console.log(searchList)
-      console.log(indexList)
-      console.log(searchItems)
-    }
-
-
-  } else{
-    if(event.key === "Enter" && document.getElementById('search-bar-input').value != "" && document.getElementById('search-bar-input').value != null){
-      let searchtext = document.getElementById('search-bar-input').value
-      let html = `<div id="ingredientName${ingid}" class="search-ingredient"><strong>x </strong><div id="nameName${ingid}" class="search-ingredient-name">${searchtext}</div></div>`
-      //console.log(ingid + "$$")
-      searchItems.push(searchtext)
-      ingredientBox.insertAdjacentHTML("beforeend", html)
-
-        // Select the newly created element
-        const newElement1 = document.getElementById(`ingredientName${ingid}`);
-        const newingid = ingid
-        console.log(newingid + "ll")
-        // Add an event listener to the new element using an arrow function
-        newElement1.addEventListener('click', () => deleteSearch(newingid));
-
-        ingid ++
-
-      document.getElementById('search-bar-input').value = ""
-      let intermediateIng = []
-      let intermediateIndex = []
-      //console.log(searchtext)
-      //console.log(searchList)
-      loop1: for(let i=0; i<searchList.length; i++){
-        let ingredientsList = searchList[i].ingredients[0]
-        loop2: for(let t=0; t<ingredientsList.length; t++){
-          if(searchList[i].ingredients[0][t].includes(searchtext) || searchList[i].title.includes(searchtext) || searchList[i].cuisine.includes(searchtext)){
-            intermediateIndex.push(searchIndexList[i])
-            intermediateIng.push(searchList[i])
-            continue loop1
-          } else continue loop2
+      // Search through the recipe list
+      loop1: for (let i = 0; i < recipeList.length; i++) {
+        let ingredientsList = recipeList[i].ingredients[0];
+        loop2: for (let t = 0; t < ingredientsList.length; t++) {
+          if (recipeList[i].ingredients[0][t].includes(searchtext) || recipeList[i].title.includes(searchtext) || recipeList[i].cuisine.includes(searchtext)) {
+            indexList.push(i);
+            continue loop1;
+          } else {
+            continue loop2;
+          }
         }
+      }
+
+      // Populate searchList and searchIndexList with the matching recipes
+      for (let i = 0; i < indexList.length; i++) {
+        searchList.push(recipeList[indexList[i]]);
+        searchIndexList.push(indexList[i]);
+      }
+
+      // Clear the recipeGrid container
+      document.getElementById('recipeGrid').innerHTML = '';
+
+      // Populate the recipeGrid with the matching recipes
+      for (let i = 0; i < indexList.length; i++) {
+        let newRecipeTitle = recipeList[indexList[i]].title;
+        let newRecipePicture = recipeList[indexList[i]].picture;
+        let html = `
+          <div class="recipe-box-container">
+            <div id="box${indexList[i]}" class="title-and-picture">
+              <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
+              <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
+            </div>
+            <div id="quantityContainer${indexList[i]}" class="quantity-container">
+              <div id="quantitySub${indexList[i]}" class="minus-button">-</div>
+              <div>/</div>
+              <div id="quantityAdd${indexList[i]}" class="plus-button">+</div>
+            </div>
+            <div id="previewShow${indexList[i]}" class="preview-button"><p>Preview</p></div>
+          </div>`;
+
+        // Insert the recipe box into the recipeGrid
+        document.getElementById('recipeGrid').insertAdjacentHTML("beforeend", html);
+
+        // Add event listeners to the newly created elements
+        document.getElementById(`box${indexList[i]}`).addEventListener('click', () => addToRecipeBox(indexList[i]));
+        document.getElementById(`quantitySub${indexList[i]}`).addEventListener('click', () => subtractQuantity(indexList[i]));
+        document.getElementById(`quantityAdd${indexList[i]}`).addEventListener('click', () => addQuantity(indexList[i]));
+        document.getElementById(`previewShow${indexList[i]}`).addEventListener('click', () => showPreview(indexList[i]));
+      }
+      reHighlightClasses();
+    }
+  } else {
+    // Logic for when there are multiple search items already present
+    if (event.key === "Enter" && document.getElementById('search-bar-input').value.trim() !== "") {
+      let searchtext = document.getElementById('search-bar-input').value;
+      let html = `<div id="ingredientName${ingid}" class="search-ingredient"><strong>x </strong><div id="nameName${id}" class="search-ingredient-name">${searchtext}</div></div>`;
+      
+      searchItems.push(searchtext);
+      ingredientBox.insertAdjacentHTML("beforeend", html);
+
+      // Select the newly created element
+      const newElement1 = document.getElementById(`ingredientName${id}`);
+      
+      // Add an event listener to the new element using an arrow function
+      newElement1.addEventListener('click', () => deleteSearch(`${id}`));
+      ingid++;
+
+      document.getElementById('search-bar-input').value = "";
+      let intermediateIng = [];
+      let intermediateIndex = [];
+
+      loop1: for (let i = 0; i < searchList.length; i++) {
+        let ingredientsList = searchList[i].ingredients[0];
+        loop2: for (let t = 0; t < ingredientsList.length; t++) {
+          if (searchList[i].ingredients[0][t].includes(searchtext) || searchList[i].title.includes(searchtext) || searchList[i].cuisine.includes(searchtext)) {
+            intermediateIndex.push(searchIndexList[i]);
+            intermediateIng.push(searchList[i]);
+            continue loop1;
+          } else {
+            continue loop2;
+          }
         }
-
-        searchIndexList = intermediateIndex
-        searchList = intermediateIng
-  
-  
-      //console.log(searchList)
-      //console.log(searchIndexList + "#$#$")
-      
-
-      indexList = searchIndexList
-      //console.log(indexList.length)
-  
-    document.getElementById('recipeA').innerHTML = ''
-    document.getElementById('recipeB').innerHTML = ''
-    document.getElementById('recipeC').innerHTML = ''
-  
-    let classMarker = 'a'
-    for(let i = 0; i<indexList.length; i++){
-      let newRecipeTitle = recipeList[indexList[i]].title
-      let newRecipePicture = recipeList[indexList[i]].picture
-      let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-      let html = 
-      ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
-        </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
-
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
-
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-
-
-
-      if(classMarker === 'a'){
-        classMarker = 'b'
-      } else if(classMarker === 'b') {
-        classMarker = 'c'
-      } else{
-        classMarker = 'a'
       }
+
+      searchIndexList = intermediateIndex;
+      searchList = intermediateIng;
+
+      // Clear the recipeGrid container
+      document.getElementById('recipeGrid').innerHTML = '';
+
+      // Repopulate the recipeGrid with updated search results
+      for (let i = 0; i < searchIndexList.length; i++) {
+        let newRecipeTitle = recipeList[searchIndexList[i]].title;
+        let newRecipePicture = recipeList[searchIndexList[i]].picture;
+        let html = `
+          <div class="recipe-box-container">
+            <div id="box${searchIndexList[i]}" class="title-and-picture">
+              <img id="picture${searchIndexList[i]}" src="${newRecipePicture}" class="recipe-picture">
+              <div id="name${searchIndexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
+            </div>
+            <div id="quantityContainer${searchIndexList[i]}" class="quantity-container">
+              <div id="quantitySubtract${searchIndexList[i]}" class="minus-button">-</div>
+              <div>/</div>
+              <div id="quantityAddition${searchIndexList[i]}" class="plus-button">+</div>
+            </div>
+            <div id="previewShowing${searchIndexList[i]}" class="preview-button"><p>Preview</p></div>
+          </div>`;
+
+        document.getElementById('recipeGrid').insertAdjacentHTML("beforeend", html);
+
+        document.getElementById(`box${searchIndexList[i]}`).addEventListener('click', () => addToRecipeBox(searchIndexList[i]));
+        document.getElementById(`quantitySubtract${searchIndexList[i]}`).addEventListener('click', () => subtractQuantity(searchIndexList[i]));
+        document.getElementById(`quantityAddition${searchIndexList[i]}`).addEventListener('click', () => addQuantity(searchIndexList[i]));
+        document.getElementById(`previewShowing${searchIndexList[i]}`).addEventListener('click', () => showPreview(searchIndexList[i]));
       }
-      reHighlightClasses()
-      console.log(searchList)
-      console.log(indexList)
-      console.log(searchItems)
+      reHighlightClasses();
     }
-      
   }
-
-  }
-
-export function deleteSearch(ingid){
-  console.log(ingid + "SSS")
-  let search = document.getElementById(`nameName${ingid}`).innerHTML
-  document.getElementById(`ingredientName${ingid}`).remove()
-  console.log(search + "$$")
-
-
-
-  if(searchItems.length===1){
-    searchList = []
-    searchIndexList = []
-    indexList = []
-    searchItems = []
-    sortRandom()
-    return
-  }
-
-
-
-  for(let i = 0; i<searchItems.length; i++){
-    if(search === searchItems[i]){
-      searchItems.splice(i,1)
-      i--
-      console.log(searchItems)
-    } 
-
-    searchList = []
-    indexList = []
-    searchIndexList = []
-
-    for(let i = 0; i<searchItems.length; i++){
-      let name = searchItems[i]
-
-      if(searchList.length<1){
-          let searchtext = name
-        loop1: for(let i=0; i<recipeList.length; i++){
-          let ingredientsList = recipeList[i].ingredients[0]
-          loop2: for(let t=0; t<ingredientsList.length; t++){
-            if(recipeList[i].ingredients[0][t].includes(searchtext) || recipeList[i].title.includes(searchtext) || recipeList[i].cuisine.includes(searchtext)){
-              indexList.push(i)
-              continue loop1
-            } else continue loop2
-          }
-          }
-      
-          for(let i=0; i<indexList.length;i++){
-            searchList.push(recipeList[indexList[i]])
-            searchIndexList.push(indexList[i])
-          }
-      
-          //console.log(searchList)
-          //console.log(searchIndexList)
-      
-        document.getElementById('recipeA').innerHTML = ''
-        document.getElementById('recipeB').innerHTML = ''
-        document.getElementById('recipeC').innerHTML = ''
-      
-        let classMarker = 'a'
-        for(let i = 0; i<indexList.length; i++){
-          let newRecipeTitle = recipeList[indexList[i]].title
-          let newRecipePicture = recipeList[indexList[i]].picture
-          let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-          let html = 
-          ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
-        </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
-
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
-
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-          if(classMarker === 'a'){
-            classMarker = 'b'
-          } else if(classMarker === 'b') {
-            classMarker = 'c'
-          } else{
-            classMarker = 'a'
-          }
-          }
-          reHighlightClasses()
-
-        
-    
-    
-      } else{
-          let searchtext = name
-          let intermediateIng = []
-          let intermediateIndex = []
-          //console.log(searchtext)
-          //console.log(searchList)
-          loop1: for(let i=0; i<searchList.length; i++){
-            let ingredientsList = searchList[i].ingredients[0]
-            loop2: for(let t=0; t<ingredientsList.length; t++){
-              if(searchList[i].ingredients[0][t].includes(searchtext) || searchList[i].title.includes(searchtext) || searchList[i].cuisine.includes(searchtext)){
-                intermediateIndex.push(searchIndexList[i])
-                intermediateIng.push(searchList[i])
-                continue loop1
-              } else continue loop2
-            }
-            }
-    
-            searchIndexList = intermediateIndex
-            searchList = intermediateIng
-      
-      
-          //console.log(searchList)
-          //console.log(searchIndexList + "#$#$")
-          
-    
-          indexList = searchIndexList
-          //console.log(indexList.length)
-      
-        document.getElementById('recipeA').innerHTML = ''
-        document.getElementById('recipeB').innerHTML = ''
-        document.getElementById('recipeC').innerHTML = ''
-      
-        let classMarker = 'a'
-        for(let i = 0; i<indexList.length; i++){
-          let newRecipeTitle = recipeList[indexList[i]].title
-          let newRecipePicture = recipeList[indexList[i]].picture
-          let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-          let html = 
-          ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
-        </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
-
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
-
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-          if(classMarker === 'a'){
-            classMarker = 'b'
-          } else if(classMarker === 'b') {
-            classMarker = 'c'
-          } else{
-            classMarker = 'a'
-          }
-          }
-          reHighlightClasses()
-        
-          
-      }
-
-
-
-    }
-
-  } 
-  console.log(searchList)
-  console.log(indexList)
-  console.log(searchItems)
 }
+
+
+
+function deleteSearch(id) {
+  console.log(id)
+  let search = document.getElementById(`nameName${id}`).innerHTML;
+  document.getElementById(`ingredientName${id}`).remove();
+  console.log(search + "$$");
+
+  if (searchItems.length === 1) {
+    searchList = [];
+    searchIndexList = [];
+    indexList = [];
+    searchItems = [];
+    sortRandom();
+    return;
+  }
+
+  for (let i = 0; i < searchItems.length; i++) {
+    if (search === searchItems[i]) {
+      searchItems.splice(i, 1);
+      i--;
+      console.log(searchItems);
+    }
+
+    searchList = [];
+    indexList = [];
+    searchIndexList = [];
+
+    for (let i = 0; i < searchItems.length; i++) {
+      let name = searchItems[i];
+
+      if (searchList.length < 1) {
+        let searchtext = name;
+        loop1: for (let i = 0; i < recipeList.length; i++) {
+          let ingredientsList = recipeList[i].ingredients[0];
+          loop2: for (let t = 0; t < ingredientsList.length; t++) {
+            if (recipeList[i].ingredients[0][t].includes(searchtext) || recipeList[i].title.includes(searchtext) || recipeList[i].cuisine.includes(searchtext)) {
+              indexList.push(i);
+              continue loop1;
+            } else continue loop2;
+          }
+        }
+
+        for (let i = 0; i < indexList.length; i++) {
+          searchList.push(recipeList[indexList[i]]);
+          searchIndexList.push(indexList[i]);
+        }
+
+        // Clear the recipe grid
+        document.getElementById('recipeGrid').innerHTML = '';
+
+        for (let i = 0; i < indexList.length; i++) {
+          let newRecipeTitle = recipeList[indexList[i]].title;
+          let newRecipePicture = recipeList[indexList[i]].picture;
+          let html = `
+          <div class="recipe-box-container">
+              <div onclick="addToRecipeBox(${indexList[i]})" id="box${indexList[i]}" class="title-and-picture">
+                <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
+                <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
+              </div>
+              <div id="quantityContainer${indexList[i]}" class="quantity-container">
+                <div onclick="subtractQuantity(${indexList[i]})" class="minus-button">-</div>
+                <div>/</div>
+                <div onclick="addQuantity(${indexList[i]})" class="plus-button">+</div>
+              </div>
+              <div onclick="showPreview(${indexList[i]})" class="preview-button"><p>Preview</p></div>
+          </div>
+          `;
+
+          // Insert into recipeGrid
+          document.getElementById('recipeGrid').insertAdjacentHTML("beforeend", html);
+        }
+
+        reHighlightClasses();
+      } else {
+        let searchtext = name;
+        let intermediateIng = [];
+        let intermediateIndex = [];
+
+        loop1: for (let i = 0; i < searchList.length; i++) {
+          let ingredientsList = searchList[i].ingredients[0];
+          loop2: for (let t = 0; t < ingredientsList.length; t++) {
+            if (searchList[i].ingredients[0][t].includes(searchtext) || searchList[i].title.includes(searchtext) || searchList[i].cuisine.includes(searchtext)) {
+              intermediateIndex.push(searchIndexList[i]);
+              intermediateIng.push(searchList[i]);
+              continue loop1;
+            } else continue loop2;
+          }
+        }
+
+        searchIndexList = intermediateIndex;
+        searchList = intermediateIng;
+
+        indexList = searchIndexList;
+
+        // Clear the recipe grid
+        document.getElementById('recipeGrid').innerHTML = '';
+
+        for (let i = 0; i < indexList.length; i++) {
+          let newRecipeTitle = recipeList[indexList[i]].title;
+          let newRecipePicture = recipeList[indexList[i]].picture;
+          let html = `
+          <div class="recipe-box-container">
+              <div onclick="addToRecipeBox(${indexList[i]})" id="box${indexList[i]}" class="title-and-picture">
+                <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
+                <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
+              </div>
+              <div id="quantityContainer${indexList[i]}" class="quantity-container">
+                <div onclick="subtractQuantity(${indexList[i]})" class="minus-button">-</div>
+                <div>/</div>
+                <div onclick="addQuantity(${indexList[i]})" class="plus-button">+</div>
+              </div>
+              <div onclick="showPreview(${indexList[i]})" class="preview-button"><p>Preview</p></div>
+          </div>
+          `;
+
+          // Insert into recipeGrid
+          document.getElementById('recipeGrid').insertAdjacentHTML("beforeend", html);
+        }
+
+        reHighlightClasses();
+      }
+    }
+  }
+  console.log(searchList);
+  console.log(indexList);
+  console.log(searchItems);
+}
+
+
+
+
+
 
 export function clearSearch(){
   document.getElementById("ingLocation").innerHTML = ""
@@ -585,126 +461,84 @@ export function clearSearch(){
   searchItems = []
 }
 
-export function sortAZ(){
-  clearSearch()
-  let alphabetList = []
-  let indexList = []
-  for(let i=0; i<recipeList.length; i++){
-    let AZtitle = recipeList[i].title
-    alphabetList.push(AZtitle)
-  }
-  alphabetList.sort()
-  //console.log(alphabetList)
-  loop1: for(let i=0; i<alphabetList.length; i++){
-    loop2: for(let z=0; z<recipeList.length; z++){
-      if(alphabetList[i] === recipeList[z].title){
-        indexList.push(`${z}`)
-        continue loop1;
-      } else{
-        continue loop2;
-      }
-    }  
-  }
-  //console.log(indexList)
- 
-  document.getElementById('recipeA').innerHTML = ''
-  document.getElementById('recipeB').innerHTML = ''
-  document.getElementById('recipeC').innerHTML = ''
+export function sortAZ() {
+  clearSearch();  // Clear any previous search filters
+  
+  let gridContainer = document.getElementById('recipeGrid');
+  gridContainer.innerHTML = '';  // Clear the grid
+  
+  // Sort the recipes alphabetically, but keep the original index for consistent IDs
+  let sortedRecipes = [...recipeList].sort((a, b) => a.title.localeCompare(b.title));
 
-  let classMarker = 'a'
-  for(let i = 0; i<indexList.length; i++){
-    let newRecipeTitle = recipeList[indexList[i]].title
-    let newRecipePicture = recipeList[indexList[i]].picture
-    let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-    let html = 
-` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
+  sortedRecipes.forEach((recipe) => {
+    const originalIndex = recipeList.indexOf(recipe);  // Get the original index of the recipe
+
+    let html = `
+      <div class="recipe-box-container">
+        <div id="box${originalIndex}" class="title-and-picture">
+          <img id="picture${originalIndex}" src="${recipe.picture}" class="recipe-picture">
+          <div id="name${originalIndex}" class="just-name">${toTitleCase(recipe.title)}</div>
         </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
-
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
-
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-    if(classMarker === 'a'){
-      classMarker = 'b'
-    } else if(classMarker === 'b') {
-      classMarker = 'c'
-    } else{
-      classMarker = 'a'
-    }
-    }
-    reHighlightClasses()
-  }
-
-export function sortOldToNew(){
-  clearSearch()
-  let indexList = []
-  for(let i=0; i<recipeList.length; i++){
-    indexList.push(i)
-  }
-
-  //indexList=indexList.reverse()
-  //console.log(indexList)
-
-  document.getElementById('recipeA').innerHTML = ''
-  document.getElementById('recipeB').innerHTML = ''
-  document.getElementById('recipeC').innerHTML = ''
-
-  let classMarker = 'a'
-  for(let i = 0; i<indexList.length; i++){
-    let newRecipeTitle = recipeList[indexList[i]].title
-    let newRecipePicture = recipeList[indexList[i]].picture
-    let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-    let html = 
-` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
+        <div id="quantityContainer${originalIndex}" class="quantity-container">
+          <div id="minusButton${originalIndex}" class="minus-button">-</div><div>/</div>
+          <div id="plusButton${originalIndex}" class="plus-button">+</div>
         </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
+        <div id="previewButton${originalIndex}" class="preview-button"><p>Preview</p></div>
+      </div>`;
 
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
+    gridContainer.insertAdjacentHTML("beforeend", html);
 
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-    if(classMarker === 'a'){
-      classMarker = 'b'
-    } else if(classMarker === 'b') {
-      classMarker = 'c'
-    } else{
-      classMarker = 'a'
-    }
-    }
-    reHighlightClasses()
+    // Add event listeners using the original index
+    document.getElementById(`box${originalIndex}`).addEventListener('click', () => addToRecipeBox(`${originalIndex}`));
+    document.getElementById(`minusButton${originalIndex}`).addEventListener('click', () => subtractQuantity(`${originalIndex}`));
+    document.getElementById(`plusButton${originalIndex}`).addEventListener('click', () => addQuantity(`${originalIndex}`));
+    document.getElementById(`previewButton${originalIndex}`).addEventListener('click', () => showPreview(`${originalIndex}`));
+  });
+    reHighlightClasses();
 
 }
+
+
+
+export function sortOldToNew() {
+  clearSearch();  // Clear any previous search filters
+
+  let gridContainer = document.getElementById('recipeGrid');
+  gridContainer.innerHTML = '';  // Clear the grid
+
+  // Recipes are already in the order from old to new, so we just display them
+  recipeList.forEach((recipe) => {
+    const originalIndex = recipeList.indexOf(recipe);  // Get the original index of the recipe
+
+    let html = `
+      <div class="recipe-box-container">
+        <div id="box${originalIndex}" class="title-and-picture">
+          <img id="picture${originalIndex}" src="${recipe.picture}" class="recipe-picture">
+          <div id="name${originalIndex}" class="just-name">${toTitleCase(recipe.title)}</div>
+        </div>
+        <div id="quantityContainer${originalIndex}" class="quantity-container">
+          <div id="minusButton${originalIndex}" class="minus-button">-</div><div>/</div>
+          <div id="plusButton${originalIndex}" class="plus-button">+</div>
+        </div>
+        <div id="previewButton${originalIndex}" class="preview-button"><p>Preview</p></div>
+      </div>`;
+
+    gridContainer.insertAdjacentHTML("beforeend", html);
+
+    // Add event listeners using the original index
+    document.getElementById(`box${originalIndex}`).addEventListener('click', () => addToRecipeBox(`${originalIndex}`));
+    document.getElementById(`minusButton${originalIndex}`).addEventListener('click', () => subtractQuantity(`${originalIndex}`));
+    document.getElementById(`plusButton${originalIndex}`).addEventListener('click', () => addQuantity(`${originalIndex}`));
+    document.getElementById(`previewButton${originalIndex}`).addEventListener('click', () => showPreview(`${originalIndex}`));
+  });
+
+  // Delay the reHighlightClasses to ensure the DOM has fully updated
+  setTimeout(() => {
+    reHighlightClasses();
+  }, 0);  // Minimal delay to ensure reHighlightClasses runs after DOM updates
+}
+
+
 
 export function randomSort(array){
   let currentIndex = array.length
@@ -719,117 +553,86 @@ export function randomSort(array){
   return array
 }
 
-export function sortRandom(){
-  clearSearch()
-  let indexList = []
-  for(let i=0; i<recipeList.length; i++){
-    indexList.push(i)
-  }
+export function sortRandom() {
+  clearSearch();  // Clear any previous search filters
 
-  indexList = randomSort(indexList)
+  let gridContainer = document.getElementById('recipeGrid');
+  gridContainer.innerHTML = '';  // Clear the grid
+
+  // Shuffle the recipes but keep track of their original indices
+  let randomOrder = randomSort([...recipeList]);  // Shuffle the recipes
   
-  
-  //console.log(indexList)
+  randomOrder.forEach((recipe) => {
+    const originalIndex = recipeList.indexOf(recipe);  // Get the original index of the recipe
 
-  document.getElementById('recipeA').innerHTML = ''
-  document.getElementById('recipeB').innerHTML = ''
-  document.getElementById('recipeC').innerHTML = ''
-
-  let classMarker = 'a'
-  for(let i = 0; i<indexList.length; i++){
-    let newRecipeTitle = recipeList[indexList[i]].title
-    let newRecipePicture = recipeList[indexList[i]].picture
-    let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-    let html = 
-   ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
+    let html = `
+      <div class="recipe-box-container">
+        <div id="box${originalIndex}" class="title-and-picture">
+          <img id="picture${originalIndex}" src="${recipe.picture}" class="recipe-picture">
+          <div id="name${originalIndex}" class="just-name">${toTitleCase(recipe.title)}</div>
         </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
+        <div id="quantityContainer${originalIndex}" class="quantity-container">
+          <div id="minusButton${originalIndex}" class="minus-button">-</div><div>/</div>
+          <div id="plusButton${originalIndex}" class="plus-button">+</div>
+        </div>
+        <div id="previewButton${originalIndex}" class="preview-button"><p>Preview</p></div>
+      </div>`;
 
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
+    gridContainer.insertAdjacentHTML("beforeend", html);
 
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
-
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-    if(classMarker === 'a'){
-      classMarker = 'b'
-    } else if(classMarker === 'b') {
-      classMarker = 'c'
-    } else{
-      classMarker = 'a'
-    }
-    }
-    reHighlightClasses()
+    // Add event listeners using the original index
+    document.getElementById(`box${originalIndex}`).addEventListener('click', () => addToRecipeBox(`${originalIndex}`));
+    document.getElementById(`minusButton${originalIndex}`).addEventListener('click', () => subtractQuantity(`${originalIndex}`));
+    document.getElementById(`plusButton${originalIndex}`).addEventListener('click', () => addQuantity(`${originalIndex}`));
+    document.getElementById(`previewButton${originalIndex}`).addEventListener('click', () => showPreview(`${originalIndex}`));
+  });
+    reHighlightClasses();
 }
 
-export function sortNewToOld(){
-  clearSearch()
-  let indexList = []
-  for(let i=0; i<recipeList.length; i++){
-    indexList.push(i)
-  }
 
-  indexList=indexList.reverse()
-  
-  //console.log(indexList)
 
-  document.getElementById('recipeA').innerHTML = ''
-  document.getElementById('recipeB').innerHTML = ''
-  document.getElementById('recipeC').innerHTML = ''
 
-  let classMarker = 'a'
-  for(let i = 0; i<indexList.length; i++){
-    let newRecipeTitle = recipeList[indexList[i]].title
-    let newRecipePicture = recipeList[indexList[i]].picture
-    let exisitingRecipes = document.querySelector(`.recipe-${classMarker}`)
-    let html = 
-    ` <div class="recipe-box-container">
-          <div id="box${indexList[i]}" class="title-and-picture">
-            <img id="picture${indexList[i]}" src="${newRecipePicture}" class="recipe-picture">
-            <div id="name${indexList[i]}" class="just-name">${toTitleCase(newRecipeTitle)}</div>
-          </div>
-          <div id="quantityContainer${indexList[i]}" class="quantity-container"><div id="quantitySubtract${indexList[i]}}" 
-          class="minus-button">-</div><div>/</div><div id="quantityAddition${indexList[i]}" class="plus-button">+</div></div>
-          <div id="previewShowing${indexList[i]}" class="preview-button"><p>Preview</p></div>
+
+export function sortNewToOld() {
+  clearSearch();  // Clear any previous search filters
+
+  let gridContainer = document.getElementById('recipeGrid');
+  gridContainer.innerHTML = '';  // Clear the grid
+
+  let reversedRecipes = [...recipeList].reverse();  // Reverse the recipe list for new to old
+
+  reversedRecipes.forEach((recipe) => {
+    const originalIndex = recipeList.indexOf(recipe);  // Get the original index of the recipe
+
+    let html = `
+      <div class="recipe-box-container">
+        <div id="box${originalIndex}" class="title-and-picture">
+          <img id="picture${originalIndex}" src="${recipe.picture}" class="recipe-picture">
+          <div id="name${originalIndex}" class="just-name">${toTitleCase(recipe.title)}</div>
         </div>
-        `
-      exisitingRecipes.insertAdjacentHTML("beforeend", html)
+        <div id="quantityContainer${originalIndex}" class="quantity-container">
+          <div id="minusButton${originalIndex}" class="minus-button">-</div><div>/</div>
+          <div id="plusButton${originalIndex}" class="plus-button">+</div>
+        </div>
+        <div id="previewButton${originalIndex}" class="preview-button"><p>Preview</p></div>
+      </div>`;
 
-      const newElement1 = document.getElementById(`box${indexList[i]}`);
-      newElement1.addEventListener('click', () => addToRecipeBox(`${indexList[i]}`));
+    gridContainer.insertAdjacentHTML("beforeend", html);
 
-      const newElement2 = document.getElementById(`quantitySubtract${indexList[i]}}`);
-      newElement2.addEventListener('click', () => subtractQuantity(`${indexList[i]}`));
+    // Add event listeners using the original index
+    document.getElementById(`box${originalIndex}`).addEventListener('click', () => addToRecipeBox(`${originalIndex}`));
+    document.getElementById(`minusButton${originalIndex}`).addEventListener('click', () => subtractQuantity(`${originalIndex}`));
+    document.getElementById(`plusButton${originalIndex}`).addEventListener('click', () => addQuantity(`${originalIndex}`));
+    document.getElementById(`previewButton${originalIndex}`).addEventListener('click', () => showPreview(`${originalIndex}`));
+  });
 
-      const newElement3 = document.getElementById(`quantityAddition${indexList[i]}`);
-      newElement3.addEventListener('click', () => addQuantity(`${indexList[i]}`));
-
-      const newElement4 = document.getElementById(`previewShowing${indexList[i]}`);
-      newElement4.addEventListener('click', () => showPreview(`${indexList[i]}`));
-    if(classMarker === 'a'){
-      classMarker = 'b'
-    } else if(classMarker === 'b') {
-      classMarker = 'c'
-    } else{
-      classMarker = 'a'
-    }
-    }
-    reHighlightClasses()
-
+  // Delay the reHighlightClasses to ensure the DOM has fully updated
+  setTimeout(() => {
+    reHighlightClasses();
+  }, 0);  // Minimal delay to ensure reHighlightClasses runs after DOM updates
 }
+
+
 
 
 
