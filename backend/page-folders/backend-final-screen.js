@@ -17,16 +17,16 @@ export async function getCategoryList(user) {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
-        let element = data.ingredientCategoryList || [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']];
+        let element = data.ingredientCategoryList;
         ingredientCategoryList = revertFormattedCategoryList(element);
         [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
         console.log('Category List:', ingredientCategoryList);
       } else {
         // Initialize with default values if no document found
-        let element2 = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
+        let ingredientCategoryList = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
         [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
-        ingredientCategoryList = formatForFirestore(element2)
-        await setDoc(userDocRef, { ingredientCategoryList });
+        const formattedIngredientCategoryList = formatForFirestore([produceList, pantryList, dairyList, meatList, bakingList, otherList]);
+        await setDoc(userDocRef, { ingredientCategoryList: formattedIngredientCategoryList });
       }
     } catch (error) {
       console.error("Error fetching ingredientCategoryList from Firestore:", error);
