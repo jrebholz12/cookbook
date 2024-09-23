@@ -24,8 +24,8 @@ export async function getCategoryList(user) {
       } else {
         // Initialize with default values if no document found
         let element2 = [['squash'], ['lentil'], ['milk'], ['steak'], ['flour'], ['wine']]
-        ingredientCategoryList = formatForFirestore(element2)
         [produceList, pantryList, dairyList, meatList, bakingList, otherList] = ingredientCategoryList;
+        ingredientCategoryList = formatForFirestore(element2)
         await setDoc(userDocRef, { ingredientCategoryList });
       }
     } catch (error) {
