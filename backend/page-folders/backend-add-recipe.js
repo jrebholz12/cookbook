@@ -314,12 +314,12 @@ export function showExistingRecipe(index) {
   cuisine = existingRecipe.cuisine;
   servings = existingRecipe.servings;
   picture = existingRecipe.picture;
-  
+
   ingredientList = [];
   quantityList = [];
   unitList = [];
   
-  numberList = 0;
+  numberList = ingredientList.length + 1;
 
   document.getElementById('deleteButton').classList.add('display-on');
 
@@ -336,35 +336,88 @@ export function showExistingRecipe(index) {
   document.querySelector('.servings-onscreen').innerHTML = `- ${servings} servings`;
 
   // Clear existing ingredients and add new ones
-  clearIngredients();
+  clearIngredients(); // Clear previous ingredients from the display
   existingRecipe.ingredients.forEach((ingredientObj, i) => {
-    // Get ingredient, quantity, and unit from each object
     const { ingredient, quantity, unit } = ingredientObj;
 
-    // Add the values to their respective arrays
     ingredientList.push(ingredient);
     quantityList.push(quantity);
     unitList.push(unit);
 
-    // Display the ingredient on the page
-    displayIngredient(i, ingredient, quantity, unit);
+    displayIngredient(i, ingredient, quantity, unit); // Display each ingredient
+  });
+
+  // Event delegation to handle delete functionality for all ingredients
+  document.querySelector('.triple-column').addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-ingredient')) {
+      deleteIngredient(event);
+    }
   });
 
   console.log(ingredientList);
 }
 
 
+export function deleteIngredient(event) {
+  // Verify the event target is valid
+  if (!event.target) {
+    console.error('Event target is undefined.');
+    return;
+  }
 
-function clearIngredients() {
-  ['ingredient', 'unit', 'quantity', 'ingredient2id', 'unit2id', 'quantity2id', 'ingredient3id', 'unit3id', 'quantity3id'].forEach(id => {
-    const column = document.getElementById(id);
-    while (column.firstChild) {
-      column.removeChild(column.firstChild);
-    }
-  });
+  // Find the closest parent with class 'list-text'
+  const quantityElement = event.target.closest('.list-text');
+  if (!quantityElement) {
+    console.error('Quantity element not found.');
+    return;
+  }
+
+  // Extract the index from the parent element's id (e.g., "quantity0" => 0)
+  const idMatch = quantityElement.id.match(/\d+/);
+  if (!idMatch) {
+    console.error('No number found in quantity element ID.');
+    return;
+  }
+  const index = idMatch[0]; // Get the number from the id
+
+  // Now find the corresponding elements for quantity, unit, and ingredient
+  const unitElement = document.getElementById(`unit${index}`);
+  const ingredientElement = document.getElementById(`ingredient${index}`);
+
+  if (!unitElement || !ingredientElement) {
+    console.log('Ingredient or unit elements not found.');
+    return;
+  }
+
+  const ingredientText = ingredientElement.innerText.toLowerCase();
+  const unitText = unitElement.innerText.toLowerCase();
+
+  // Find the ingredient in the arrays
+  const ingredientIndex = ingredientList.findIndex((ingredient, i) =>
+    ingredient === ingredientText && unitList[i] === unitText
+  );
+
+  if (ingredientIndex > -1) {
+    // Remove the ingredient from the arrays
+    ingredientList.splice(ingredientIndex, 1);
+    unitList.splice(ingredientIndex, 1);
+    quantityList.splice(ingredientIndex, 1);
+
+    // Remove the corresponding elements from the DOM
+    ingredientElement.remove();
+    quantityElement.remove();
+    unitElement.remove();
+
+    console.log('Ingredient removed:', ingredientList);
+  } else {
+    console.log('Ingredient not found in the list.');
+  }
 }
 
+
+
 function displayIngredient(index, ingredient, quantity, unit) {
+  // Determine the container for ingredient, quantity, and unit based on the index
   const ingredientLocation = index < 10 ? 'ingredient' : index < 20 ? 'ingredient2id' : 'ingredient3id';
   const quantityLocation = index < 10 ? 'quantity' : index < 20 ? 'quantity2id' : 'quantity3id';
   const unitLocation = index < 10 ? 'unit' : index < 20 ? 'unit2id' : 'unit3id';
@@ -383,10 +436,10 @@ function displayIngredient(index, ingredient, quantity, unit) {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-ingredient');
   deleteButton.textContent = 'x';
-  deleteButton.addEventListener('click', () => deleteIngredient(index));
-
+  
+  // Append the delete button to the quantityDiv
   quantityDiv.appendChild(deleteButton);
-  quantityDiv.append(toTitleCase(quantity));
+  quantityDiv.append(` ${quantity}`); // Append quantity text
 
   // Create unit element
   const unitDiv = document.createElement('div');
@@ -399,6 +452,25 @@ function displayIngredient(index, ingredient, quantity, unit) {
   document.getElementById(quantityLocation).appendChild(quantityDiv);
   document.getElementById(unitLocation).appendChild(unitDiv);
 }
+
+
+
+
+
+
+
+
+
+function clearIngredients() {
+  ['ingredient', 'unit', 'quantity', 'ingredient2id', 'unit2id', 'quantity2id', 'ingredient3id', 'unit3id', 'quantity3id'].forEach(id => {
+    const column = document.getElementById(id);
+    while (column.firstChild) {
+      column.removeChild(column.firstChild);
+    }
+  });
+}
+
+
 
 
 
@@ -498,53 +570,6 @@ function appendIngredientHTML(index, ingredient, quantity, unit, columnSuffix) {
   ingredientLocation.appendChild(ingredientDiv);
   quantityLocation.appendChild(quantityDiv);
   unitLocation.appendChild(unitDiv);
-}
-
-
-
-export function deleteIngredient(event) {
-  // Get the index from the delete button's data attribute
-  const index = event.target.dataset.index;
-
-  const unitElement = document.getElementById(`unit${index}`);
-  const quantityElement = document.getElementById(`quantity${index}`);
-  const ingredientElement = document.getElementById(`ingredient${index}`);
-
-  if (!unitElement || !quantityElement || !ingredientElement) {
-    console.log('Ingredient elements not found.');
-    return;
-  }
-
-  const ingredientText = ingredientElement.innerText.toLowerCase();
-  const unitText = unitElement.innerText.toLowerCase();
-
-  const ingredientIndex = ingredientList.findIndex((ingredient, i) =>
-    ingredient === ingredientText && unitList[i] === unitText
-  );
-
-  if (ingredientIndex > -1) {
-    // Remove the ingredient from the arrays
-    ingredientList.splice(ingredientIndex, 1);
-    unitList.splice(ingredientIndex, 1);
-    quantityList.splice(ingredientIndex, 1);
-
-    // Remove the corresponding elements from the DOM
-    ingredientElement.remove();
-    quantityElement.remove();
-    unitElement.remove();
-
-    // Decrement the number of ingredients
-    numberList--;
-
-    console.log('Ingredient removed:', ingredientList);
-    console.log('Updated Unit List:', unitList);
-    console.log('Updated Quantity List:', quantityList);
-
-    // Focus back on the quantity input
-    document.getElementById('id-quantity').focus();
-  } else {
-    console.log('Ingredient not found in the list.');
-  }
 }
 
 

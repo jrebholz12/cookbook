@@ -41,6 +41,9 @@ fields.forEach(({ id, fieldName }) => {
 });
 
 
+
+
+
 document.getElementById('previewImageUpload').addEventListener('click', previewImage)
 
 document.addEventListener('DOMContentLoaded', () => {
