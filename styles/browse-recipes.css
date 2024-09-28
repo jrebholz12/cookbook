@@ -313,4 +313,12 @@ padding: 0px 8px;
 
 }
 
+/* Hide family container on small screens */
+@media (max-width: 1060px) {
+  .family-container {
+      display: none;
+  }
+}
+
+
 
