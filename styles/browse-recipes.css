@@ -242,6 +242,7 @@ padding: 0px 8px;
 }
 
 
+
 .red{
   background-color: red;
   z-index: 1000;
@@ -330,12 +331,37 @@ padding: 0px 8px;
   .family-container {
       display: none;
   }
+
+  .recipe-popup {
+    border: 0.4vw solid black; /* Slightly thinner border */
+    border-radius: 1vw; /* Reduced border radius */
+    padding: 3vw; /* Reduced padding */
+}
+
+.recipes-list-title {
+    font-size: 2.5vw; /* Slightly smaller font size */
+    padding: 1vw; /* Reduced padding */
+}
+
+.recipe-popup-list {
+    font-size: 2.2vw; /* Slightly smaller font size */
+    padding: 0.4vw; /* Reduced padding */
+}
+
+.get-ingredients {
+    border-radius: 1vw; /* Reduced border radius */
+    padding: 1vw; /* Reduced padding */
+    margin-top: 1vw; /* Reduced margin */
+}
+
 }
 
 @media only screen and (max-width: 480px) {
   #cuisineSort {
     display: none;
   }
+
+  
 }
 
 
