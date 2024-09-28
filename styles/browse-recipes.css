@@ -199,6 +199,7 @@ padding: 0px 8px;
   z-index: 4000;
   padding: 1vw; /* Reduced padding */
   opacity: 0.8;
+  transition: 0.4s;
 }
 
 .recipe-popup:hover {
