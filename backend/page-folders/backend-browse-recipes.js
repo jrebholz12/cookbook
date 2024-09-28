@@ -184,7 +184,7 @@ export function ingredientSearch(event) {
   const id = ingid
   if (searchList.length < 1) {
     if (event.key === "Enter" && document.getElementById('search-bar-input').value.trim() !== "") {
-      let searchtext = document.getElementById('search-bar-input').value;
+      let searchtext = document.getElementById('search-bar-input').value.toLowerCase();
       searchItems.push(searchtext);
       
       let html = `<div id="ingredientName${id}" class="search-ingredient"><strong>x </strong><div id="nameName${id}" class="search-ingredient-name">${searchtext}</div></div>`;
