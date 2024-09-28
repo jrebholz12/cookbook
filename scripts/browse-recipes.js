@@ -22,6 +22,29 @@ document.getElementById('exitButton').addEventListener('click', hidePreview)
 //document.getElementById('getIngredients').addEventListener('click', clearPageFromLocalStorage)
 document.getElementById('getIngredients').addEventListener('click', populateRecipeShoppingList)
 
+document.addEventListener('DOMContentLoaded', () => {
+  const filterButton = document.getElementById('filterButton');
+  const filterMain = document.querySelector('.filter-main');
+
+  // Toggle visibility on click
+  filterButton.addEventListener('click', () => {
+    filterMain.classList.toggle('visible');
+  });
+
+  // Show on hover
+  filterButton.addEventListener('mouseover', () => {
+    filterMain.classList.add('visible');
+  });
+
+  // Hide on mouseout if not clicked
+  filterButton.addEventListener('mouseout', () => {
+    if (!filterMain.classList.contains('clicked')) {
+      filterMain.classList.remove('visible');
+    }
+  });
+});
+
+
 
 
 
