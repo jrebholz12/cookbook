@@ -72,7 +72,7 @@ const modalBackdrop = document.getElementById('modalBackdrop');
 const closeModal = document.getElementById('closeModal');
 const modalTextarea = document.getElementById('modalTextarea');
 
-let notesContent = ""; // Store notes content here
+let notesContent = ""; // Store notes content her
 
 notesExpand.addEventListener('click', () => {
   modalTextarea.value = notesContent;
