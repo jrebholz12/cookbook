@@ -72,36 +72,35 @@ const modalBackdrop = document.getElementById('modalBackdrop');
 const closeModal = document.getElementById('closeModal');
 const modalTextarea = document.getElementById('modalTextarea');
 
-let notesContent = ""; // Store notes content her
+let notesContent = ""; // Store notes content here
 
+// Open the modal when "Expand" is clicked
 notesExpand.addEventListener('click', () => {
-  modalTextarea.value = notesContent;
-  notesModal.style.display = 'block';
-  modalBackdrop.style.display = 'block';
+  modalTextarea.value = notesContent; // Populate modal with current notes
+  notesModal.style.display = 'block'; // Show modal
+  modalBackdrop.style.display = 'block'; // Show backdrop
 });
 
+// Close the modal when "x" is clicked
 closeModal.addEventListener('click', () => {
   notesContent = modalTextarea.value; // Save changes
-  notesModal.style.display = 'none';
-  modalBackdrop.style.display = 'none';
+  notesModal.style.display = 'none'; // Hide modal
+  modalBackdrop.style.display = 'none'; // Hide backdrop
 });
 
+// Close the modal when the backdrop is clicked
 modalBackdrop.addEventListener('click', () => {
   notesContent = modalTextarea.value; // Save changes
-  notesModal.style.display = 'none';
-  modalBackdrop.style.display = 'none';
-})
-;
-;
+  notesModal.style.display = 'none'; // Hide modal
+  modalBackdrop.style.display = 'none'; // Hide backdrop
+});
 
+// Event listeners for buttons and input fields
+document.getElementById('saveButton').addEventListener('click', saveRecipe);
+document.getElementById('printButton').addEventListener('click', printRecipe);
+document.getElementById('deleteButton').addEventListener('click', deleteRecipe);
 
-
-
-document.getElementById('saveButton').addEventListener('click', saveRecipe)
-document.getElementById('printButton').addEventListener('click', printRecipe)
-document.getElementById('deleteButton').addEventListener('click', deleteRecipe)
-
-document.getElementById('cutting-search').addEventListener('keyup', searchRecipes)
+document.getElementById('cutting-search').addEventListener('keyup', searchRecipes);
 
 document.getElementById('ingredientQuestion').addEventListener('mouseover', () => showHelp('ingredient'));
 document.getElementById('ingredientQuestion').addEventListener('mouseout', () => showHelp('ingredient'));
@@ -111,14 +110,6 @@ document.getElementById('unitQuestion').addEventListener('mouseout', () => showH
 
 document.getElementById('quantityQuestion').addEventListener('mouseover', () => showHelp('quantity'));
 document.getElementById('quantityQuestion').addEventListener('mouseout', () => showHelp('quantity'));
-
-document.getElementById('notesExpand').addEventListener('click', () => {
-  const modalTextarea = document.getElementById('modalTextarea');
-  modalTextarea.value = notes; // Populate modal with current notes
-  modalTextarea.addEventListener('input', (event) => {
-    notes = event.target.value; // Update global notes variable on input
-  });
-});
 
 
 
