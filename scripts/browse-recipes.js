@@ -19,7 +19,7 @@ document.getElementById('randomSort').addEventListener('click', sortRandom)
 document.getElementById('search-bar-input').addEventListener('keydown', (event)=>ingredientSearch(event))
 document.getElementById('exitButton').addEventListener('click', hidePreview)
 
-//document.getElementById('getIngredients').addEventListener('click', clearPageFromLocalStorage)
+//document.getElementById('getIngredients').addEventListener('clic', clearPageFromLocalStorage)
 document.getElementById('getIngredients').addEventListener('click', populateRecipeShoppingList)
 
 document.addEventListener('DOMContentLoaded', () => {
