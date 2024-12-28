@@ -136,7 +136,7 @@ export function addField(event, field) {
     }
 
     const fieldValue = recipeInput.value.trim();
-    fullRecipe[field] = fieldValue;
+    fullRecipe[field] = fieldValue; // Save notes or other fields into fullRecipe
 
     if (recipeField) {
       recipeField.innerHTML = fieldValue; // Display notes or other fields onscreen
@@ -150,6 +150,7 @@ export function addField(event, field) {
     }
   }
 }
+
 
 
 
@@ -314,11 +315,12 @@ export function showExistingRecipe(index) {
   cuisine = existingRecipe.cuisine;
   servings = existingRecipe.servings;
   picture = existingRecipe.picture;
+  notes = existingRecipe.notes || ''; // Load notes into variable, default to empty string
 
   ingredientList = [];
   quantityList = [];
   unitList = [];
-  
+
   numberList = ingredientList.length + 1;
 
   document.getElementById('deleteButton').classList.add('display-on');
@@ -329,6 +331,7 @@ export function showExistingRecipe(index) {
   document.getElementById('id-cuisine').value = toTitleCase(cuisine);
   document.getElementById('id-servings').value = servings;
   document.getElementById('id-picture').value = picture;
+  document.getElementById('id-notes').value = notes; // Populate notes field
 
   document.querySelector('.title-onscreen').innerHTML = toTitleCase(title);
   document.querySelector('.website-onscreen').innerHTML = '/' + toTitleCase(website);
@@ -346,16 +349,8 @@ export function showExistingRecipe(index) {
 
     displayIngredient(i, ingredient, quantity, unit); // Display each ingredient
   });
-
-  // Event delegation to handle delete functionality for all ingredients
-  document.querySelector('.triple-column').addEventListener('click', function(event) {
-    if (event.target.classList.contains('delete-ingredient')) {
-      deleteIngredient(event);
-    }
-  });
-
-  console.log(ingredientList);
 }
+
 
 
 export function deleteIngredient(event) {
@@ -595,7 +590,7 @@ export async function saveRecipe() {
   const ingredients = ingredientList.map((ingredient, index) => ({
     ingredient: ingredient,
     quantity: quantityList[index],
-    unit: unitList[index]
+    unit: unitList[index],
   }));
 
   const newRecipe = {
@@ -604,8 +599,8 @@ export async function saveRecipe() {
     servings: fullRecipe.servings,
     picture: fullRecipe.picture,
     website: fullRecipe.website,
-    notes: notes, // Include notes in the recipe object
-    ingredients: ingredients
+    notes: fullRecipe.notes || '', // Include notes, default to empty string if not set
+    ingredients: ingredients,
   };
 
   const user = auth.currentUser;
@@ -643,6 +638,7 @@ export async function saveRecipe() {
 }
 
 
+
 function clearRecipeForm() {
   document.querySelector(`.recipe-list-container`).innerHTML = '';
   document.querySelector(`.input-title`).value = '';
@@ -650,15 +646,17 @@ function clearRecipeForm() {
   document.querySelector(`.input-cuisine`).value = '';
   document.querySelector(`.input-picture`).value = '';
   document.querySelector(`.input-servings`).value = '';
-  notes = ''; // Reset notes
+  document.querySelector(`#id-notes`).value = ''; // Clear notes field
 
   fullRecipe = {};
+  notes = ''; // Reset notes variable
   ingredientList = [];
   quantityList = [];
   unitList = [];
   numberList = 0;
   location.reload();
 }
+
 
 
 export function showHelp(category){
