@@ -186,27 +186,31 @@ export function previewImage() {
   const location = document.getElementById('pictureInputContainer');
   const existingImage = document.getElementById('imageUpload');
 
+  // Check if the input URL is valid
   if (imageURL) {
-    const html = `<img id="imageUpload" src="${imageURL}" class="image-preview">`;
+    // HTML to render the image
+    const html = `<img id="imageUpload" src="${imageURL}" class="image-preview" alt="Recipe Image">`;
 
-    // If an existing image is already uploaded, replace it
+    // If an image already exists, replace it
     if (existingImage) {
       existingImage.remove();
     }
 
-    // Insert new image after the container
+    // Insert the image after the container
     location.insertAdjacentHTML('afterend', html);
 
-    // Update picture in the recipe object
+    // Update the picture in the recipe object
     picture = imageURL;
     fullRecipe.picture = imageURL;
 
   } else {
-    console.log('Error: Image URL is empty.');
+    console.error('Error: Image URL is empty.');
   }
 
+  // Optional: Debug log the updated fullRecipe object
   console.log(fullRecipe);
 }
+
 
 
 export function enterPreviewImage(event) {
