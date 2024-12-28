@@ -49,40 +49,46 @@
         <img class="title-picture" src="icons/pencil.png">
       </div>
 
-
       <div class="input-container">
         <!-- Recipe Details Section -->
         <fieldset class="recipe-info">
           <legend>Recipe Details</legend>
-          
+
           <label for="id-title">Recipe Name</label>
           <div id="recipeNameContainer" class="name-container">
             <input id="id-title" class="input-field input-title" placeholder="Recipe Name">
           </div>
-          
+
           <label for="id-website">Source</label>
           <div id="recipeNameContainer" class="name-container">
             <input id="id-website" class="input-field input-website" placeholder="Source">
           </div>
-          
+
           <label for="id-cuisine">Cuisine</label>
           <input id="id-cuisine" class="input-field input-cuisine" placeholder="Cuisine">
-          
+
           <label for="id-servings">Servings</label>
           <input id="id-servings" class="input-field input-servings" placeholder="Servings">
-          
+
           <label for="id-picture">Image URL</label>
           <div id="pictureInputContainer" class="picture-input-container">
             <input id="id-picture" class="input-field input-picture" placeholder="Image URL">
             <button id="previewImageUpload" class="upload-button">Upload</button>
           </div>
           <div class="onscreen-container">
-            <!-- Add this line to handle the image URL being displayed -->
             <div class="picture-onscreen"></div>
           </div>
-          
-          
+
           <div class="image-preview-text">Recommend image ratio of 2.3 : 1</div>
+        </fieldset>
+
+        <!-- Notes Section -->
+        <fieldset class="recipe-info">
+          <legend>Notes (Optional)</legend>
+          <div class="flex-box" id="notesExpand">
+            <label class="id-notes" for="id-notes">Click here to add recipe notes..</label>
+            <img class="question-icon" src="icons/expand.png" alt="Expand Notes">
+          </div>
         </fieldset>
 
         <!-- Ingredients Section -->
@@ -113,7 +119,7 @@
               </div>
             </div>
           </div>
-          
+
           <label for="id-ingredient">Ingredient</label>
           <div id="ingredientInputContainer" class="addRecipe-input-container">
             <input id="id-ingredient" class="input-field input-ingredient" placeholder="Ingredient"> 
@@ -125,12 +131,11 @@
                 <div id="ingredientHelpText" class="help-text">Enter in the name of each ingredient. Try to be consistent with your names. <br>(i.e. tomato, parmesan, ground beef)</div>
               </div>
             </div>
-          </div>          
+          </div>
 
         </fieldset>
       </div>
 
-      
     </div>
 
     <div class="middle-column">
@@ -167,7 +172,7 @@
         <button id="deleteButton" class="button delete-button">Delete Recipe</button>
 
       </div>
-      
+
     </div>
     <div class="right-column">
       <div class="title-and-picture">
@@ -178,15 +183,23 @@
       </div>
       <div class="list-container">
         <div id="recipeBoxList" class="recipe-box-list">
-          
+
         </div>
         <img class="cutting-board" src="icons/cuttingboard.png">
         <input type="text" id="cutting-search" placeholder="Search..." class="recipe-search">
       </div>
     </div>
   </main>
-  <div class="recipe-container">    
+  <div class="recipe-container">
   </div>
+
+  <!-- Modal Section -->
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal" id="notesModal">
+    <button class="close-btn" id="closeModal">&times;</button>
+    <textarea id="modalTextarea"></textarea>
+  </div>
+
   
   <script type="module" src="backend/firebase.js"></script>
   <script type="module" src="scripts/add-recipe.js"></script>

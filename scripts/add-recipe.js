@@ -66,6 +66,35 @@ document.addEventListener('DOMContentLoaded', () => {
   });  
 });
 
+const notesExpand = document.getElementById('notesExpand');
+const notesModal = document.getElementById('notesModal');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const closeModal = document.getElementById('closeModal');
+const modalTextarea = document.getElementById('modalTextarea');
+
+let notesContent = ""; // Store notes content here
+
+notesExpand.addEventListener('click', () => {
+  modalTextarea.value = notesContent;
+  notesModal.style.display = 'block';
+  modalBackdrop.style.display = 'block';
+});
+
+closeModal.addEventListener('click', () => {
+  notesContent = modalTextarea.value; // Save changes
+  notesModal.style.display = 'none';
+  modalBackdrop.style.display = 'none';
+});
+
+modalBackdrop.addEventListener('click', () => {
+  notesContent = modalTextarea.value; // Save changes
+  notesModal.style.display = 'none';
+  modalBackdrop.style.display = 'none';
+})
+;
+;
+
+
 
 
 document.getElementById('saveButton').addEventListener('click', saveRecipe)
@@ -82,6 +111,15 @@ document.getElementById('unitQuestion').addEventListener('mouseout', () => showH
 
 document.getElementById('quantityQuestion').addEventListener('mouseover', () => showHelp('quantity'));
 document.getElementById('quantityQuestion').addEventListener('mouseout', () => showHelp('quantity'));
+
+document.getElementById('notesExpand').addEventListener('click', () => {
+  const modalTextarea = document.getElementById('modalTextarea');
+  modalTextarea.value = notes; // Populate modal with current notes
+  modalTextarea.addEventListener('input', (event) => {
+    notes = event.target.value; // Update global notes variable on input
+  });
+});
+
 
 
 

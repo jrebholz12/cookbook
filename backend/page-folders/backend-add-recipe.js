@@ -66,6 +66,7 @@ let ingredientList = [];
 let quantityList = [];
 let unitList = [];
 let numberList = 0;
+let notes = ''
 let i = 0;
 
 // Function to load units from Firestore or default to predefined list
@@ -125,25 +126,22 @@ export function addField(event, field) {
   const recipeInput = document.getElementById(`id-${field}`);
   const recipeField = document.querySelector(`.${field}-onscreen`);
 
-  // Handle both 'keydown' and 'blur'
-  const shouldProceed = (event.type === 'blur' && recipeInput.value.trim()) ||
-                        ((event.key === "Enter" || event.key === 'Tab') && recipeInput.value.trim());
+  const shouldProceed =
+    (event.type === 'blur' && recipeInput.value.trim()) ||
+    ((event.key === "Enter" || event.key === 'Tab') && recipeInput.value.trim());
 
   if (shouldProceed) {
     if (event.key === 'Enter' || event.key === 'Tab') {
-      event.preventDefault(); // Prevent default only for keydown events
+      event.preventDefault();
     }
 
-    const fieldValue = recipeInput.value.toLowerCase();
+    const fieldValue = recipeInput.value.trim();
     fullRecipe[field] = fieldValue;
 
-    if (field === 'picture') {
-      previewImage();  // If the field is 'picture', trigger image preview
-    } else if (recipeField) {
-      recipeField.innerHTML = formatField(field, fieldValue);
+    if (recipeField) {
+      recipeField.innerHTML = fieldValue; // Display notes or other fields onscreen
     }
 
-    // Focus on the next input field based on the current field (only for keydown)
     if (event.type !== 'blur') {
       const nextField = getNextField(field);
       if (nextField) {
@@ -152,6 +150,7 @@ export function addField(event, field) {
     }
   }
 }
+
 
 
 
@@ -585,7 +584,6 @@ export function addToList(input){
 export async function saveRecipe() {
   const requiredFields = ['title', 'website', 'cuisine', 'servings', 'picture'];
 
-  // Check if all required fields are filled
   for (const field of requiredFields) {
     if (!fullRecipe[field] || fullRecipe[field].trim() === '') {
       alert('Missing entries. Fill out fields on the left and try again.');
@@ -593,7 +591,6 @@ export async function saveRecipe() {
     }
   }
 
-  // Convert ingredients into an array of objects
   const ingredients = ingredientList.map((ingredient, index) => ({
     ingredient: ingredient,
     quantity: quantityList[index],
@@ -606,7 +603,8 @@ export async function saveRecipe() {
     servings: fullRecipe.servings,
     picture: fullRecipe.picture,
     website: fullRecipe.website,
-    ingredients: ingredients // Store ingredients as an array of objects
+    notes: notes, // Include notes in the recipe object
+    ingredients: ingredients
   };
 
   const user = auth.currentUser;
@@ -616,20 +614,12 @@ export async function saveRecipe() {
     return;
   }
 
-  // Reference to the Firestore document
   const userDocRef = doc(db, 'users', user.uid, 'data', 'recipeList');
 
   try {
-    // Check if the document exists
     const docSnap = await getDoc(userDocRef);
+    let recipeList = docSnap.exists() ? docSnap.data().recipeList || [] : [];
 
-    let recipeList = [];
-
-    if (docSnap.exists()) {
-      recipeList = docSnap.data().recipeList || [];
-    }
-
-    // Check if the recipe title already exists
     const existingRecipeIndex = recipeList.findIndex(recipe => recipe.title === fullRecipe.title);
     if (existingRecipeIndex > -1) {
       if (confirm('A recipe with this title already exists. Do you want to overwrite it?')) {
@@ -641,7 +631,6 @@ export async function saveRecipe() {
       recipeList.push(newRecipe);
     }
 
-    // Save the updated recipeList back to Firestore (creating the document if it doesn't exist)
     await setDoc(userDocRef, { recipeList: recipeList }, { merge: true });
 
     alert('Recipe saved successfully!');
@@ -652,6 +641,7 @@ export async function saveRecipe() {
   }
 }
 
+
 function clearRecipeForm() {
   document.querySelector(`.recipe-list-container`).innerHTML = '';
   document.querySelector(`.input-title`).value = '';
@@ -659,15 +649,16 @@ function clearRecipeForm() {
   document.querySelector(`.input-cuisine`).value = '';
   document.querySelector(`.input-picture`).value = '';
   document.querySelector(`.input-servings`).value = '';
+  notes = ''; // Reset notes
 
   fullRecipe = {};
   ingredientList = [];
   quantityList = [];
   unitList = [];
   numberList = 0;
-  //alert('Form cleared');
   location.reload();
 }
+
 
 export function showHelp(category){
   let location = document.getElementById(`${category}HelpContainer`)
