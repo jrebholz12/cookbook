@@ -72,28 +72,26 @@ const modalBackdrop = document.getElementById('modalBackdrop');
 const closeModal = document.getElementById('closeModal');
 const modalTextarea = document.getElementById('modalTextarea');
 
-let notesContent = ""; // Store notes content here
-
 // Open the modal when "Expand" is clicked
 notesExpand.addEventListener('click', () => {
-  modalTextarea.value = notesContent; // Populate modal with current notes
+  modalTextarea.value = fullRecipe.notes || ''; // Populate modal with current notes or empty if none exist
   notesModal.style.display = 'block'; // Show modal
   modalBackdrop.style.display = 'block'; // Show backdrop
 });
 
-// Close the modal when "x" is clicked
-closeModal.addEventListener('click', () => {
-  notesContent = modalTextarea.value; // Save changes
+// Function to close the modal and save the notes
+const closeNotesModal = () => {
+  fullRecipe.notes = modalTextarea.value.trim(); // Save changes to fullRecipe object
   notesModal.style.display = 'none'; // Hide modal
   modalBackdrop.style.display = 'none'; // Hide backdrop
-});
+};
+
+// Close the modal when "x" is clicked
+closeModal.addEventListener('click', closeNotesModal);
 
 // Close the modal when the backdrop is clicked
-modalBackdrop.addEventListener('click', () => {
-  notesContent = modalTextarea.value; // Save changes
-  notesModal.style.display = 'none'; // Hide modal
-  modalBackdrop.style.display = 'none'; // Hide backdrop
-});
+modalBackdrop.addEventListener('click', closeNotesModal);
+
 
 // Event listeners for buttons and input fields
 document.getElementById('saveButton').addEventListener('click', saveRecipe);

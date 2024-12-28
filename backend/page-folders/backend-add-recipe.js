@@ -315,7 +315,7 @@ export function showExistingRecipe(index) {
   cuisine = existingRecipe.cuisine;
   servings = existingRecipe.servings;
   picture = existingRecipe.picture;
-  notes = existingRecipe.notes || ''; // Load notes into variable, default to empty string
+  fullRecipe.notes = existingRecipe.notes || ''; // Load notes into `fullRecipe`
 
   ingredientList = [];
   quantityList = [];
@@ -331,7 +331,12 @@ export function showExistingRecipe(index) {
   document.getElementById('id-cuisine').value = toTitleCase(cuisine);
   document.getElementById('id-servings').value = servings;
   document.getElementById('id-picture').value = picture;
-  document.getElementById('id-notes').value = notes; // Populate notes field
+
+  // Populate notes in the modal textarea
+  const modalTextarea = document.getElementById('modalTextarea');
+  if (modalTextarea) {
+    modalTextarea.value = fullRecipe.notes;
+  }
 
   document.querySelector('.title-onscreen').innerHTML = toTitleCase(title);
   document.querySelector('.website-onscreen').innerHTML = '/' + toTitleCase(website);
@@ -350,6 +355,7 @@ export function showExistingRecipe(index) {
     displayIngredient(i, ingredient, quantity, unit); // Display each ingredient
   });
 }
+
 
 
 
@@ -593,6 +599,7 @@ export async function saveRecipe() {
     unit: unitList[index],
   }));
 
+  // Ensure `notes` field is included in the recipe object
   const newRecipe = {
     title: fullRecipe.title,
     cuisine: fullRecipe.cuisine,
@@ -636,6 +643,7 @@ export async function saveRecipe() {
     alert('Failed to save recipe. Please try again.');
   }
 }
+
 
 
 
