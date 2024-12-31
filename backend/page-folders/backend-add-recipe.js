@@ -62,6 +62,7 @@ let website = '';
 let cuisine = '';
 let servings = '';
 let picture = '';
+let notes = ''
 let ingredientList = [];
 let quantityList = [];
 let unitList = [];
@@ -314,6 +315,7 @@ export function showExistingRecipe(index) {
   cuisine = existingRecipe.cuisine;
   servings = existingRecipe.servings;
   picture = existingRecipe.picture;
+  notes = existingRecipe.notes || '';
 
   ingredientList = [];
   quantityList = [];
@@ -329,6 +331,8 @@ export function showExistingRecipe(index) {
   document.getElementById('id-cuisine').value = toTitleCase(cuisine);
   document.getElementById('id-servings').value = servings;
   document.getElementById('id-picture').value = picture;
+  document.getElementById('id-notes').value = notes || '';
+
 
   document.querySelector('.title-onscreen').innerHTML = toTitleCase(title);
   document.querySelector('.website-onscreen').innerHTML = '/' + toTitleCase(website);
@@ -454,7 +458,11 @@ function displayIngredient(index, ingredient, quantity, unit) {
 }
 
 
-
+function saveNotes(event){
+  notes = document.getElementById('id-notes').value
+  fullRecipe.notes = notes;
+  console.log(fullRecipe)
+}
 
 
 
@@ -606,6 +614,7 @@ export async function saveRecipe() {
     servings: fullRecipe.servings,
     picture: fullRecipe.picture,
     website: fullRecipe.website,
+    notes: fullRecipe.notes,
     ingredients: ingredients // Store ingredients as an array of objects
   };
 
@@ -690,3 +699,26 @@ export function toTitleCase(str) {
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const notesExpand = document.getElementById('notesExpand');
+const notesModal = document.getElementById('notesModal');
+const modalBackdropNotes = document.getElementById('modalBackdropNotes');
+const closeNotesModal = document.getElementById('closeNotesModal');
+const notesTextarea = document.getElementById('id-notes');
+
+notesExpand.addEventListener('click', () => {
+  notesTextarea.value = notes;
+  notesModal.style.display = 'block';
+  modalBackdropNotes.style.display = 'block';
+});
+
+closeNotesModal.addEventListener('click', () => {
+  saveNotes()
+  notesModal.style.display = 'none';
+  modalBackdropNotes.style.display = 'none';
+});
+
+modalBackdropNotes.addEventListener('click', () => {
+  notesModal.style.display = 'none';
+  modalBackdropNotes.style.display = 'none';
+});

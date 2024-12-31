@@ -314,7 +314,7 @@ font-size: 10px;
   position : absolute;
   margin-left: 350px;
   margin-top: -30px;
-  z-index: 1000;
+  z-index: 888;
   
 }
 
@@ -377,6 +377,96 @@ font-size: 10px;
 .display-off{
   display: none;
 }
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%; /* Use a percentage to ensure it adapts to smaller screens */
+  max-width: 500px; /* Limit the maximum width for larger screens */
+  max-height: 80vh; /* Ensure it fits within the viewport height */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Slightly darker for better contrast */
+  z-index: 999;
+}
+
+.close-btn {
+  position: absolute;
+  top: 4px; /* Move it above the modal content */
+  right: 4px; /* Slightly outside the modal boundary */
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%; /* Circular button */
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, color 0.2s, background 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+  color: red;
+  background: #f5f5f5;
+  border-color: red;
+}
+
+
+textarea#id-notes {
+  width: calc(100% - 30px); /* Subtract padding for proper fit */
+  height: 200px; /* More space for notes */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  resize: vertical; /* Allow vertical resizing only */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+textarea#id-notes:focus {
+  outline: none;
+  border: 1px solid #d9b12e; /* Highlight border when focused */
+  box-shadow: 0 0 5px rgba(171, 168, 19, 0.5);
+}
+
+.notes-expand {
+  transition: all .15s;
+  color: #333;
+}
+
+.notes-expand:hover {
+ cursor: pointer;
+ transform: scale(1.2);
+}
+
+
+
+
+
 
 
 

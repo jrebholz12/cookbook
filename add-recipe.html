@@ -85,6 +85,10 @@
           <div class="image-preview-text">Recommend image ratio of 2.3 : 1</div>
         </fieldset>
 
+
+        
+
+
         <!-- Ingredients Section -->
         <fieldset class="recipe-info recipe-info2">
           <legend>Ingredients</legend>
@@ -128,6 +132,23 @@
           </div>          
 
         </fieldset>
+
+                  <!-- Section for Notes -->
+                  <fieldset class="recipe-info">
+                    <legend>Notes (Optional)</legend>
+                    <div id="notesExpand">
+                      <label class="notes-expand" for="id-notes">Click here to add/edit notes...</label>
+                    </div>
+                  </fieldset>
+        
+                  <!-- Modal Section for Notes -->
+                  <div class="modal-backdrop" id="modalBackdropNotes"></div>
+                  <div class="modal" id="notesModal">
+                    <button class="close-btn" id="closeNotesModal">&times;</button>
+                    <textarea id="id-notes" placeholder="Add your notes here..."></textarea>
+                  </div>
+
+
       </div>
 
       
