@@ -95,3 +95,18 @@ p {
     max-width: 90%;
   }
 }
+
+.error-message{
+  font-size: 20px;
+  display: flex;
+  color: red;
+}
+
+.success-message{
+  font-size: 14px;
+  display: flex;
+  color: green;
+}
+
+
+

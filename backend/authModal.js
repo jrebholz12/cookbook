@@ -1,3 +1,22 @@
+import {  signOut } from 'https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js';
+import { auth, db } from '../backend/firebase.js';
+import { initiateTheme } from "../backend/docs.js";
+
+// Sign Out Function
+function signOutUser() {
+  signOut(auth)
+    .then(() => {
+      authLink.innerText = 'Sign In';
+      document.getElementById('settingsContainer').classList.add('display-off');
+      document.getElementById('familyName').innerHTML = 'Your Name Here';
+      initiateTheme();
+    })
+    .catch((error) => {
+      console.error('Error signing out:', error.message);
+    });
+}
+
+
 // Get modal and close button elements
 const modal = document.getElementById('authModal');
 const authLink = document.getElementById('authLink');
@@ -11,41 +30,63 @@ const signUpContainer = document.getElementById('sign-up-container');
 const switchToSignUp = document.getElementById('switchToSignUp');
 const switchToSignIn = document.getElementById('switchToSignIn');
 
+// Utility function to toggle modal visibility
+function toggleModal(show) {
+  modal.style.display = show ? 'block' : 'none';
+  modal.setAttribute('aria-hidden', show ? 'false' : 'true');
+  if (show) {
+    signInContainer.style.display = 'flex';
+    signUpContainer.style.display = 'none';
+  }
+}
+
+// Utility function to switch between forms
+export function switchToForm(showContainer, hideContainer) {
+  hideContainer.style.display = 'none';
+  showContainer.style.display = 'flex';
+}
+
 // Open modal when the sign-in/sign-up link is clicked
 authLink.addEventListener('click', (event) => {
   event.preventDefault();
-  let text = document.getElementById('authLink').innerHTML
-  if(text == "Sign Out"){
-    modal.style.display = 'none'
-    console.log('nonono')
-  } else
-  modal.style.display = 'block';
-  signInContainer.style.display = 'flex'; // Show sign-in form by default
-  signUpContainer.style.display = 'none';  // Hide sign-up form by default
+  if (authLink.innerText === "Sign Out") {
+    return;
+  }
+  toggleModal(true);
 });
 
 // Close modal when the 'X' is clicked
-closeBtn.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => {
+    toggleModal(false);
+  });
+}
 
-// Close modal if user clicks outside the modal content
-window.addEventListener('click', (event) => {
-  if (event.target === modal) {
-    modal.style.display = 'none';
-  }
-});
 
 // Switch to the Sign-Up form
-switchToSignUp.addEventListener('click', (event) => {
-  event.preventDefault();
-  signInContainer.style.display = 'none';
-  signUpContainer.style.display = 'flex';
-});
+if (switchToSignUp) {
+  switchToSignUp.addEventListener('click', (event) => {
+    event.preventDefault();
+    switchToForm(signUpContainer, signInContainer);
+  });
+}
 
 // Switch back to the Sign-In form
-switchToSignIn.addEventListener('click', (event) => {
+if (switchToSignIn) {
+  switchToSignIn.addEventListener('click', (event) => {
+    event.preventDefault();
+    switchToForm(signInContainer, signUpContainer);
+  });
+}
+
+// Open modal when the sign-in/sign-up link is clicked
+authLink.addEventListener('click', (event) => {
   event.preventDefault();
-  signInContainer.style.display = 'flex';
-  signUpContainer.style.display = 'none';
+  if (authLink.innerText === 'Sign Out') {
+    signOutUser(); // Sign out if user is already signed in
+  } else {
+    modal.style.display = 'block';
+    signInContainer.style.display = 'flex';
+    signUpContainer.style.display = 'none';
+  }
 });

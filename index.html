@@ -46,23 +46,29 @@
   <div class="modal-content">
     <span class="close">&times;</span>
     
-    <!-- Sign-In Form -->
-    <div id="sign-in-container">
-      <h2>Sign In</h2>
-      <input type="email" id="signInEmail" placeholder="Email" required>
-      <input type="password" id="signInPassword" placeholder="Password" required>
-      <button id="signInButton">Sign In</button>
-      <p class="extra">Not signed up? <a href="#" id="switchToSignUp">Click here to sign up</a></p>
-    </div>
+   <!-- Sign-In Form -->
+<div id="sign-in-container">
+  <h2>Sign In</h2>
+  <input type="email" id="signInEmail" placeholder="Email" required>
+  <input type="password" id="signInPassword" placeholder="Password" required>
+  <button id="signInButton">Sign In</button>
+  <p class="extra">
+    <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+  </p>
+  <p class="extra">Not signed up? <a href="#" id="switchToSignUp">Click here to sign up</a></p>
+</div>
+
     
     <!-- Sign-Up Form -->
     <div id="sign-up-container" style="display:none;">
       <h2>Sign Up</h2>
       <input type="email" id="signUpEmail" placeholder="Email" required>
       <input type="password" id="signUpPassword" placeholder="Password" required>
+      <input type="password" id="signUpVerifyPassword" placeholder="Verify Password" required>
       <button id="signUpButton">Sign Up</button>
       <p class="extra">Already have an account? <a href="#" id="switchToSignIn">Click here to sign in</a></p>
     </div>
+    
   </div>
 </div>
 
@@ -107,6 +113,7 @@
   <script type="module" src="scripts/index.js"></script>
   <script type="module" src="backend/app.js"></script>
   <script type="module" src="backend/authModal.js"></script>
+  <script type="module" src="backend/auth.js"></script>
   
 
 
