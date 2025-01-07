@@ -62,7 +62,7 @@ let website = '';
 let cuisine = '';
 let servings = '';
 let picture = '';
-let notes = ''
+let notes = '';
 let ingredientList = [];
 let quantityList = [];
 let unitList = [];
@@ -169,11 +169,13 @@ function formatField(field, value) {
 }
 
 function getNextField(currentField) {
+  console.log(recipeList)
   const fieldOrder = ['title', 'website', 'cuisine', 'servings', 'picture', 'quantity'];
   const currentIndex = fieldOrder.indexOf(currentField);
   return currentIndex >= 0 && currentIndex < fieldOrder.length - 1
     ? `id-${fieldOrder[currentIndex + 1]}`
     : null;
+    
 }
 
 
@@ -317,11 +319,11 @@ export function showExistingRecipe(index) {
   picture = existingRecipe.picture;
   notes = existingRecipe.notes || '';
 
-  ingredientList = [];
+  //console.log(existingRecipe)
+
+  ingredientList = []
   quantityList = [];
   unitList = [];
-  
-  numberList = ingredientList.length + 1;
 
   document.getElementById('deleteButton').classList.add('display-on');
 
@@ -347,6 +349,12 @@ export function showExistingRecipe(index) {
     ingredientList.push(ingredient);
     quantityList.push(quantity);
     unitList.push(unit);
+
+    numberList = ingredientList.length;
+
+    console.log(ingredientList)
+
+  console.log(ingredientList.length)
 
     displayIngredient(i, ingredient, quantity, unit); // Display each ingredient
   });
@@ -540,6 +548,9 @@ function processIngredientInput(ingredientInput, quantityInput, unitInput) {
 
   // Increment the number of ingredients
   numberList++;
+
+  console.log(ingredientList)
+  console.log(quantityList)
 }
 
 
@@ -614,7 +625,7 @@ export async function saveRecipe() {
     servings: fullRecipe.servings,
     picture: fullRecipe.picture,
     website: fullRecipe.website,
-    notes: fullRecipe.notes,
+    notes: fullRecipe.notes || "",
     ingredients: ingredients // Store ingredients as an array of objects
   };
 
@@ -643,6 +654,7 @@ export async function saveRecipe() {
     if (existingRecipeIndex > -1) {
       if (confirm('A recipe with this title already exists. Do you want to overwrite it?')) {
         recipeList[existingRecipeIndex] = newRecipe;
+        console.log(newRecipe)
       } else {
         return;
       }

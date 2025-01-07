@@ -729,44 +729,79 @@ showGetIngredients()
 setShoppingListTitles()
 }
 
-export function showPreview(index){
-  let recipeName = recipeList[index].title
-  let recipeWebsite = recipeList[index].website
-  let recipeCuisine = recipeList[index].cuisine
-  let recipePicture = recipeList[index].picture
-  let recipeServings = recipeList[index].servings
-  let insertArea = document.getElementById('recipePreview')
-  let checkArea = document.getElementById('previewContainer')
+export function showPreview(index) {
+  let recipeName = recipeList[index].title;
+  let recipeWebsite = recipeList[index].website;
+  let recipeCuisine = recipeList[index].cuisine;
+  let recipePicture = recipeList[index].picture;
+  let recipeServings = recipeList[index].servings;
+  let recipeNotes = recipeList[index].notes;
+  let insertArea = document.getElementById('recipePreview');
+  let checkArea = document.getElementById('previewContainer');
 
-  if(checkArea === null){
-  } else {
-    checkArea.innerHTML = ''
+  console.log(recipeList[index]);
+  console.log(recipeNotes);
+  console.log(recipePicture);
+  console.log(index);
+
+  if (checkArea !== null) {
+    checkArea.innerHTML = '';
   }
 
-  insertArea.classList.add('display-on')
+  insertArea.classList.add('display-on');
 
-  let html = ` <div id="previewContainer" class="preview-contents">
-  <div class="preview-title">${toTitleCase(recipeName)}</div>
-  <div class="preview-website">${toTitleCase(recipeWebsite)}</div>
-  <div class="preview-servings">${toTitleCase(recipeServings)} servings</div>
-  <div class="preview-cuisine">${toTitleCase(recipeCuisine)}</div>
-  <div id="ingredientPreviewContainer" class="ingredient-preview-container"></div>
-  </div>`
-  insertArea.insertAdjacentHTML("afterbegin", html)
-  let ingredientInputArea = document.getElementById('ingredientPreviewContainer')
-  for (let v=0; v<recipeList[index].ingredients[0].length; v++){
-    let line = ' ' + String(recipeList[index].ingredients[0][v]) + ', ' + String(recipeList[index].ingredients[1][v]) + ' ' + String(recipeList[index].ingredients[2][v]);
-    let uppercaseLine = toTitleCase(line)
-    let ingredientHTML = `<div class="preview-ingredient">${uppercaseLine}</div>`
-    ingredientInputArea.insertAdjacentHTML("beforeend", ingredientHTML)  
+  let html = `<div id="previewContainer" class="preview-contents">
+    <div class="preview-title">${toTitleCase(recipeName)}</div>
+    <div class="preview-website">${toTitleCase(recipeWebsite)}</div>
+    <div class="preview-servings">${toTitleCase(recipeServings)} servings</div>
+    <div class="preview-cuisine">${toTitleCase(recipeCuisine)}</div>
+    <div id="ingredientPreviewContainer" class="ingredient-preview-container"></div>
+  </div>`;
+
+  insertArea.insertAdjacentHTML("afterbegin", html);
+
+  // Add ingredients to the preview
+  let ingredientInputArea = document.getElementById('ingredientPreviewContainer');
+  for (let v = 0; v < recipeList[index].ingredients[0].length; v++) {
+    let line = ` ${String(recipeList[index].ingredients[0][v])}, ${String(recipeList[index].ingredients[1][v])} ${String(recipeList[index].ingredients[2][v])}`;
+    let uppercaseLine = toTitleCase(line);
+    let ingredientHTML = `<div class="preview-ingredient">${uppercaseLine}</div>`;
+    ingredientInputArea.insertAdjacentHTML("beforeend", ingredientHTML);
   }
- 
+
+  // Add Notes link if notes exist
+  if (recipeNotes && recipeNotes.trim() !== "") {
+    let notesLinkHTML = `<div class="preview-notes-link" style="text-align: center;"><a href="#" id="showNotes" style="text-decoration: underline; color: blue; cursor: pointer;">Notes</a></div>`;
+    document.getElementById('previewContainer').insertAdjacentHTML("beforeend", notesLinkHTML);
+
+    // Add click listener for the Notes link
+    document.getElementById('showNotes').addEventListener('click', function (e) {
+      e.preventDefault();
+      showNotes(recipeNotes);
+    });
+  }
 }
 
-export function hidePreview(){
-  let insertArea = document.getElementById('recipePreview')
-  insertArea.classList.remove('display-on')
+function showNotes(notes) {
+  let previewContainer = document.getElementById('previewContainer');
+  if (previewContainer) {
+    previewContainer.innerHTML = `<div class="preview-notes">${notes}</div>
+      <div class="preview-notes-link" style="text-align: center;"><a href="#" id="showIngredients" style="text-decoration: underline; color: blue; cursor: pointer;">Ingredients</a></div>`;
+
+    // Add click listener for the Ingredients link
+    document.getElementById('showIngredients').addEventListener('click', function () {
+      const currentIndex = recipeList.findIndex(recipe => recipe.notes === notes);
+      showPreview(currentIndex);
+    });
+  }
 }
+
+export function hidePreview() {
+  let insertArea = document.getElementById('recipePreview');
+  insertArea.classList.remove('display-on');
+}
+
+
 
 export function showGetIngredients(){
   let recipeList = document.querySelector('.recipe-popup-list')

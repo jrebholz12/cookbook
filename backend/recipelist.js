@@ -42,6 +42,7 @@ export function transformRecipeList(recipeList) {
       cuisine: recipe.cuisine,
       servings: recipe.servings,
       picture: recipe.picture,
+      notes: recipe.notes,
       ingredients: [ingredientNames, ingredientQuantities, ingredientUnits]
     };
   });
